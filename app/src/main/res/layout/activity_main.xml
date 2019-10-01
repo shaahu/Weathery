@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearMain"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100"
+    tools:context="com.shahu.weathery.MainActivity">
+
+    <ImageView
+        android:id="@+id/add_new_loc_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:layout_toStartOf="@id/main_time"
+        android:layout_marginTop="50dp"
+        android:scaleX="0.75"
+        android:scaleY="0.75"
+        android:layout_marginEnd="20dp"
+        android:layout_alignParentEnd="true"
+        android:contentDescription="@string/add_new_location_button"
+        android:src="@drawable/ic_plus" />
+
+    <TextView
+        android:id="@+id/main_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:fontFamily="@font/substance_light"
+        android:textAlignment="center"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/main_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/main_date"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:fontFamily="@font/substance_light"
+        android:layout_marginBottom="10dp"
+        android:textAlignment="center"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/main_city_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/raleway_italic"
+        android:textSize="16sp"
+        android:letterSpacing="0.1"
+        android:gravity="center"/>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/locations"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/main_time"
+        android:layout_centerHorizontal="true"/>
+</RelativeLayout>

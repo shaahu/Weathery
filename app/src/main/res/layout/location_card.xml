@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="25dp">
+
+    <RelativeLayout
+        android:id="@+id/card_ll"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/card_name"
+        android:layout_marginTop="10dp">
+
+        <ImageView
+            android:id="@+id/card_image"
+            android:layout_width="80dp"
+            android:layout_centerVertical="true"
+            android:layout_height="80dp"
+            android:src="@drawable/rain_svg2" />
+
+        <TextView
+            android:layout_marginStart="20dp"
+            android:id="@+id/card_temperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/card_image"
+            android:gravity="center"
+            android:layout_centerVertical="true"
+            android:fontFamily="@font/oblivia"
+            android:textAlignment="center"
+            android:textSize="60sp" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/card_desc"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center"
+        android:letterSpacing="0.5"
+        android:fontFamily="@font/montserrat_regular"
+        android:layout_below="@id/card_ll"/>
+
+    <View
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/card_desc"
+        android:layout_width="fill_parent"
+        android:layout_marginHorizontal="10dp"
+        android:layout_height="1dp"
+        android:background="@color/grey_400" />
+
+
+    <TextView
+        android:layout_marginTop="15dp"
+        android:id="@+id/card_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/vitro_bold"
+        android:textSize="22sp" />
+
+
+</RelativeLayout>

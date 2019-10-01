@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Weathery</string>
+    <string name="no_net">No Internet Connection!</string>
+    <string name="no_city">No City Found!</string>
+    <string name="north">North</string>
+    <string name="ne">NorthEast</string>
+    <string name="east">East</string>
+    <string name="se">SouthEast</string>
+    <string name="south">South</string>
+    <string name="sw">SouthWest</string>
+    <string name="west">West</string>
+    <string name="nw">NorthWest</string>
+    <string name="hhmm">HHMM</string>
+    <string name="add_new_location_button">add new location button</string>
+    <string name="remove_location">Remove Location</string>
+    <string name="move_up">Move Up</string>
+    <string name="move_down">Move Down</string>
+</resources>
