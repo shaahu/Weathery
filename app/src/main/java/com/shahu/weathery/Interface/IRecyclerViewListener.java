@@ -9,6 +9,4 @@ import android.view.View;
 public interface IRecyclerViewListener {
 
     void onSingleShortClickListener(int cityId);
-
-    void onLongClickListener(int cityId, View v);
 }

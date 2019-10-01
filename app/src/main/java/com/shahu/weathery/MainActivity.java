@@ -8,12 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +30,8 @@ import com.shahu.weathery.Interface.IVolleyResponse;
 import com.shahu.weathery.Model.CardModel;
 import com.shahu.weathery.Model.OpenWeatherMainResponse;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,6 +43,9 @@ import java.util.Map;
 import ir.mirrajabi.searchdialog.SimpleSearchDialogCompat;
 import ir.mirrajabi.searchdialog.core.BaseSearchDialogCompat;
 import ir.mirrajabi.searchdialog.core.SearchResultListener;
+import me.rishabhkhanna.recyclerswipedrag.OnDragListener;
+import me.rishabhkhanna.recyclerswipedrag.OnSwipeListener;
+import me.rishabhkhanna.recyclerswipedrag.RecyclerHelper;
 
 import static com.shahu.weathery.Common.Constants.CURRENT_LOCATION_HTTP_REQUEST;
 import static com.shahu.weathery.Common.Constants.WEATHER_HTTP_REQUEST_BY_ID;
@@ -283,44 +286,36 @@ public class MainActivity extends AppCompatActivity {
      * initialize the recycler view.
      */
     private void initRecyclerView() {
-        IRecyclerViewListener IRecyclerViewListener = new IRecyclerViewListener() {
+        IRecyclerViewListener recyclerViewListener = new IRecyclerViewListener() {
             @Override
             public void onSingleShortClickListener(int cityId) {
                 Log.d(TAG, "onSingleShortClickListener: " + cityId);
             }
-
-            @Override
-            public void onLongClickListener(int cityId, View v) {
-                openItemPopup(cityId,v);
-            }
         };
-        mLocationRecyclerViewAdapter = new LocationRecyclerViewAdapter(mCardModelArrayList, this, IRecyclerViewListener);
+        mLocationRecyclerViewAdapter = new LocationRecyclerViewAdapter(mCardModelArrayList, this, recyclerViewListener);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerViewLocations.setLayoutManager(layoutManager);
-
         mRecyclerViewLocations.setAdapter(mLocationRecyclerViewAdapter);
-    }
 
-    private void openItemPopup(int cityId, View v) {
-        TextView remove,moveup,movedown;
-        LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = layoutInflater.inflate(R.layout.item_popup, null);
-        final PopupWindow popupWindow = new PopupWindow(popupView,android.view.ViewGroup.LayoutParams.WRAP_CONTENT,android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-        remove  = popupView.findViewById(R.id.remove_loc);
-        moveup  = popupView.findViewById(R.id.move_up);
-        movedown  = popupView.findViewById(R.id.move_down);
-        popupWindow.showAtLocation(popupView, Gravity.CENTER,v.getScrollX(),v.getScrollY());
-        popupWindow.setOutsideTouchable(false);
-        popupWindow.setFocusable(true);
-        popupWindow.update();
-        remove.setOnClickListener(new View.OnClickListener()
-        {
+        RecyclerHelper touchHelper = new RecyclerHelper<CardModel>(mCardModelArrayList,
+                (RecyclerView.Adapter) mLocationRecyclerViewAdapter);
+        touchHelper.setRecyclerItemDragEnabled(true).setOnDragItemListener(new OnDragListener() {
             @Override
-            public void onClick(View v)
-            {
-                popupWindow.dismiss();
+            public void onDragItemListener(int fromPosition, int toPosition) {
+                Log.d(TAG, "onDragItemListener: callback after dragging recycler view item");
             }
         });
+        touchHelper.setRecyclerItemSwipeEnabled(true).setOnSwipeItemListener(new OnSwipeListener() {
+            @Override
+            public void onSwipeItemListener(@Nullable RecyclerView.ViewHolder oldPosition) {
+                LocationRecyclerViewAdapter.MyViewHolder myViewHolder = (LocationRecyclerViewAdapter.MyViewHolder) oldPosition;
+                if (myViewHolder != null) {
+                    Log.d(TAG, "onSwipeItemListener: remove location: " + mLocationSharedPreferences.removeLocation(myViewHolder.cityId));
+                }
+            }
+        });
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(touchHelper);
+        itemTouchHelper.attachToRecyclerView(mRecyclerViewLocations);
     }
 
     /**

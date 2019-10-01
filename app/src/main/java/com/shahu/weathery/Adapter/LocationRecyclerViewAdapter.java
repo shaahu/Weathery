@@ -50,6 +50,7 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
                 setImageDrawable(mContext.getDrawable(ImageHelper.getDescriptionImageDrawable(mCardModelArrayList.get(i).getImageStr())));
         myViewHolder.cardTemperature.setText(ValuesConverter.convertTemperatureToCelsius(mCardModelArrayList.get(i).getTemperature()) + "\u2103");
         myViewHolder.cardDescription.setText(mCardModelArrayList.get(i).getDescription());
+        myViewHolder.cityId = mCardModelArrayList.get(i).getCityId();
     }
 
     @Override
@@ -58,7 +59,8 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
     }
 
 
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public int cityId;
         TextView cardName;
         TextView cardTemperature;
         TextView cardDescription;
@@ -71,20 +73,12 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
             cardImage = itemView.findViewById(R.id.card_image);
             cardDescription = itemView.findViewById(R.id.card_desc);
             itemView.setOnClickListener(this);
-            itemView.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             if (mIRecyclerViewListener != null)
                 mIRecyclerViewListener.onSingleShortClickListener(mCardModelArrayList.get(getLayoutPosition()).getCityId());
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-            if (mIRecyclerViewListener != null)
-                mIRecyclerViewListener.onLongClickListener(mCardModelArrayList.get(getLayoutPosition()).getCityId(), v);
-            return true;
         }
     }
 

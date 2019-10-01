@@ -2,6 +2,7 @@ package com.shahu.weathery.Common;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.util.Map;
 
@@ -63,11 +64,12 @@ public class LocationSharedPreferences {
         return null;
     }
 
-    public boolean removeLocation(String cityId) {
-        if (!mSharedPreferences.contains(cityId)) {
+    public boolean removeLocation(int cityId) {
+        String key = getPositionByCityId(cityId);
+        if (!mSharedPreferences.contains(key)) {
             return false;
         }
-        mSharedPreferences.edit().remove(cityId).apply();
+        mSharedPreferences.edit().remove(key).apply();
         return true;
     }
 }
