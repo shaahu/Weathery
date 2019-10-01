@@ -16,6 +16,7 @@ import com.shahu.weathery.Interface.IRecyclerViewListener;
 import com.shahu.weathery.Model.CardModel;
 import com.shahu.weathery.R;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -46,8 +47,13 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
         myViewHolder.cardName.setText(mCardModelArrayList.get(i).getName().toUpperCase());
-        myViewHolder.cardImage.
-                setImageDrawable(mContext.getDrawable(ImageHelper.getDescriptionImageDrawable(mCardModelArrayList.get(i).getImageStr())));
+
+        try {
+            myViewHolder.cardImage.setImageDrawable(ImageHelper.getDescriptionImageDrawable(mCardModelArrayList.get(i).getImageStr(),mContext));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         myViewHolder.cardTemperature.setText(ValuesConverter.convertTemperatureToCelsius(mCardModelArrayList.get(i).getTemperature()) + "\u2103");
         myViewHolder.cardDescription.setText(mCardModelArrayList.get(i).getDescription());
         myViewHolder.cityId = mCardModelArrayList.get(i).getCityId();

@@ -20,4 +20,9 @@ public final class Constants {
     //RequestTypes
     public final static String CURRENT_LOCATION_HTTP_REQUEST = "currentLocationWeatherRequest";
     public final static String WEATHER_HTTP_REQUEST_BY_ID = "weatherByCityId";
+
+    //WeatherIcons
+    private static final String WEATHER_ICONS_ASSET_PATH = "w_icons/";
+    public static final String WEATHER_ICONS_DAY = WEATHER_ICONS_ASSET_PATH+"day/";
+    public static final String WEATHER_ICONS_NIGHT = "night/";
 }

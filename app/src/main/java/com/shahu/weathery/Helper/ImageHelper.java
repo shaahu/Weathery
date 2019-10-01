@@ -1,9 +1,15 @@
 package com.shahu.weathery.Helper;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import com.shahu.weathery.Model.WeatherItem;
-import com.shahu.weathery.R;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import static com.shahu.weathery.Common.Constants.WEATHER_ICONS_DAY;
 
 /**
  * Created by Shahu Ronghe on 23, September, 2019
@@ -17,9 +23,11 @@ public class ImageHelper {
     private static final String SNOW_MAIN = "Snow";
     private static final String CLEAR_MAIN = "Clear";
     private static final String CLOUDS_MAIN = "Clouds";
+    private static Context mContext;
 
-    public static int getDescriptionImageDrawable(WeatherItem weatherItem) {
-        Log.e("weather", "getDescriptionImageDrawable: "+weatherItem.toString() );
+    public static Drawable getDescriptionImageDrawable(WeatherItem weatherItem, Context context) throws IOException {
+        mContext = context;
+        Log.e("weather", "getDescriptionImageDrawable: " + weatherItem.toString());
         final String main = weatherItem.getMain();
         final String desc = weatherItem.getDescription();
         switch (main) {
@@ -31,28 +39,28 @@ public class ImageHelper {
 
         }
 
-        return R.drawable.overcast;
+        return getImageStream("clear");
     }
 
-    private static int getClearDescription(String desc) {
-        return R.drawable.autumnsvg;
+    private static Drawable getClearDescription(String desc) throws IOException {
+        return getImageStream("fair");
     }
 
-    private static int getCloudDescription(String desc) {
+    private static Drawable getCloudDescription(String desc) throws IOException {
         final String FEW_CLOUDS = "few clouds";
         final String SCATTERED = "scattered clouds";
         final String BROKEN = "broken clouds";
         final String OVERCAST = "overcast clouds";
-        switch (desc){
+        switch (desc) {
             case FEW_CLOUDS:
-                return R.drawable.few_clouds;
-            case SCATTERED:
-                return R.drawable.scattered_clouds;
-            case BROKEN:
-                return R.drawable.broken_cloud;
-            case OVERCAST:
-                return R.drawable.overcast;
+                return getImageStream("clear");
+
         }
-        return 0;
+        return null;
+    }
+
+    private static Drawable getImageStream(String fileName) throws IOException {
+        InputStream ims = mContext.getAssets().open(WEATHER_ICONS_DAY + fileName + ".png");
+        return Drawable.createFromStream(ims, null);
     }
 }
