@@ -104,8 +104,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSelected(BaseSearchDialogCompat dialog, CitySearch item, int position) {
                 String cityId = mDatabaseHandler.retrieveCityIdByName(item.getTitle());
-                Log.d(TAG, "onSelected: inserting into sharedPreference: " + mLocationSharedPreferences.addNewLocation(cityId));
-                mVolleyRequest.getWeatherByCityId(cityId, WEATHER_HTTP_REQUEST_BY_ID);
+                if (mLocationSharedPreferences.addNewLocation(cityId))
+                    mVolleyRequest.getWeatherByCityId(cityId, WEATHER_HTTP_REQUEST_BY_ID);
+                else
+                    Toast.makeText(MainActivity.this, "Already Exist", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
         }).show();
@@ -302,7 +304,8 @@ public class MainActivity extends AppCompatActivity {
         touchHelper.setRecyclerItemDragEnabled(true).setOnDragItemListener(new OnDragListener() {
             @Override
             public void onDragItemListener(int fromPosition, int toPosition) {
-                Log.d(TAG, "onDragItemListener: callback after dragging recycler view item");
+                Log.d(TAG, "onDragItemListener: from: " + fromPosition + ", to: " + toPosition);
+                mLocationSharedPreferences.updatePosition(fromPosition, toPosition);
             }
         });
         touchHelper.setRecyclerItemSwipeEnabled(true).setOnSwipeItemListener(new OnSwipeListener() {

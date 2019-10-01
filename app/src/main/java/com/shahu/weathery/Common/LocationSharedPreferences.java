@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import java.util.Comparator;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static com.shahu.weathery.Common.Constants.LOCATION_SHARED_PREFERENCE_NAME;
 
@@ -70,6 +72,50 @@ public class LocationSharedPreferences {
             return false;
         }
         mSharedPreferences.edit().remove(key).apply();
+        improveKeys();
         return true;
+    }
+
+    private void improveKeys() {
+        int count = 1;
+        Map<Integer, String> sortedValues = new TreeMap<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o1.compareTo(o2);
+            }
+        });
+        Log.d(TAG, "improveKeys: OldKeys: " + mSharedPreferences.getAll().keySet().toString());
+        for (Map.Entry<String, ?> entry : mSharedPreferences.getAll().entrySet()) {
+            sortedValues.put(Integer.valueOf(entry.getKey()), entry.getValue().toString());
+        }
+        mSharedPreferences.edit().clear().apply();
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        for (Map.Entry<Integer, String> entry : sortedValues.entrySet()) {
+            editor.putString(String.valueOf(count), entry.getValue()).apply();
+            count++;
+        }
+        Log.d(TAG, "improveKeys: NewKeys: " + mSharedPreferences.getAll().keySet().toString());
+    }
+
+    private String getValueByPosition(int pos) {
+        return mSharedPreferences.getString(String.valueOf(pos), null);
+    }
+
+    private void removeKey(int pos) {
+        mSharedPreferences.edit().remove(String.valueOf(pos)).apply();
+    }
+
+    private void addKeyValues(int pos, String value) {
+        mSharedPreferences.edit().putString(String.valueOf(pos), value).apply();
+    }
+
+    public void updatePosition(int fromPosition, int toPosition) {
+        String fromValue = getValueByPosition(fromPosition);
+        String toValues = getValueByPosition(toPosition);
+        removeKey(fromPosition);
+        removeKey(toPosition);
+        addKeyValues(toPosition, fromValue);
+        addKeyValues(fromPosition, toValues);
+        Log.d(TAG, "updatePosition: " + mSharedPreferences.getAll());
     }
 }
