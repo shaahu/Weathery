@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,9 +48,8 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
         myViewHolder.cardName.setText(mCardModelArrayList.get(i).getName().toUpperCase());
-
         try {
-            myViewHolder.cardImage.setImageDrawable(ImageHelper.getDescriptionImageDrawable(mCardModelArrayList.get(i).getImageStr(),mContext));
+            myViewHolder.cardImage.setImageDrawable(ImageHelper.getDescriptionImageDrawable(mCardModelArrayList.get(i),mContext));
         } catch (IOException e) {
             e.printStackTrace();
         }

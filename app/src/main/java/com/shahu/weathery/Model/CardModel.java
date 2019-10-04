@@ -13,6 +13,7 @@ public class CardModel {
     private String mTemperature;
     private String mDescription;
     private int mCityId;
+    private String mDayNight;
 
     public CardModel(String name, int position, WeatherItem weatherItem, String temperature, String description, int cityId) {
         mName = name;
@@ -21,6 +22,14 @@ public class CardModel {
         mTemperature = temperature;
         mDescription = description;
         mCityId = cityId;
+    }
+
+    public String getDayNight() {
+        return mDayNight;
+    }
+
+    public void setDayNight(String dayNight) {
+        mDayNight = dayNight;
     }
 
     public CardModel(CardModel cardModel) {
@@ -67,12 +76,12 @@ public class CardModel {
         mPosition = position;
     }
 
-    public WeatherItem getImageStr() {
+    public WeatherItem getWeatherItem() {
         return mWeatherItem;
     }
 
-    public void setImageStr(WeatherItem imageStr) {
-        mWeatherItem = imageStr;
+    public void setWeatherItem(WeatherItem weatherItem) {
+        mWeatherItem = weatherItem;
     }
 
     public String getTemperature() {

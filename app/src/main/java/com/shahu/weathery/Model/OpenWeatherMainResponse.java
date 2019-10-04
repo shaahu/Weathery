@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 public class OpenWeatherMainResponse{
 
 	@SerializedName("dt")
-	private int dt;
+	private long dt;
 
 	@SerializedName("coord")
 	private Coord coord;
@@ -43,11 +43,11 @@ public class OpenWeatherMainResponse{
 	@SerializedName("wind")
 	private Wind wind;
 
-	public void setDt(int dt){
+	public void setDt(long dt){
 		this.dt = dt;
 	}
 
-	public int getDt(){
+	public long getDt(){
 		return dt;
 	}
 

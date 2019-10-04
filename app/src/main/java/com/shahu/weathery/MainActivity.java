@@ -25,6 +25,7 @@ import com.shahu.weathery.Common.VolleyRequest;
 import com.shahu.weathery.Helper.CitySearch;
 import com.shahu.weathery.Helper.DatabaseHandler;
 import com.shahu.weathery.Helper.Locator;
+import com.shahu.weathery.Helper.ValuesConverter;
 import com.shahu.weathery.Interface.IRecyclerViewListener;
 import com.shahu.weathery.Interface.IVolleyResponse;
 import com.shahu.weathery.Model.CardModel;
@@ -126,9 +127,10 @@ public class MainActivity extends AppCompatActivity {
         cardModel.setName(openWeatherMainResponse.getName() + ", " + openWeatherMainResponse.getSys().getCountry());
         cardModel.setPosition(Integer.parseInt(mLocationSharedPreferences.getPositionByCityId(openWeatherMainResponse.getId())));
         cardModel.setTemperature(String.valueOf(openWeatherMainResponse.getMain().getTemp()));
-        cardModel.setImageStr(openWeatherMainResponse.getWeather().get(0));
+        cardModel.setWeatherItem(openWeatherMainResponse.getWeather().get(0));
         cardModel.setDescription(openWeatherMainResponse.getWeather().get(0).getDescription().toUpperCase());
         cardModel.setCityId(openWeatherMainResponse.getId());
+        cardModel.setDayNight(ValuesConverter.getDayNight(openWeatherMainResponse));
         mCardModelArrayList.add(cardModel);
         Collections.sort(mCardModelArrayList, new Comparator<CardModel>() {
             @Override
@@ -152,7 +154,8 @@ public class MainActivity extends AppCompatActivity {
         cardModel.setPosition(0);
         cardModel.setCityId(openWeatherMainResponse.getId());
         cardModel.setTemperature(String.valueOf(openWeatherMainResponse.getMain().getTemp()));
-        cardModel.setImageStr(openWeatherMainResponse.getWeather().get(0));
+        cardModel.setWeatherItem(openWeatherMainResponse.getWeather().get(0));
+        cardModel.setDayNight(ValuesConverter.getDayNight(openWeatherMainResponse));
         cardModel.setDescription(openWeatherMainResponse.getWeather().get(0).getDescription().toUpperCase());
         mCardModelArrayList.add(cardModel);
         mLocationRecyclerViewAdapter.notifyDataSetChanged();
