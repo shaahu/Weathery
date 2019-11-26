@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
     private void initialization() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         mCheckPermissions = new CheckPermissions(this, MainActivity.this);
+        mCityName = findViewById(R.id.main_city_name);
         initSharedPref();
         initVolleyCallback();
         initDatabase();
@@ -98,7 +99,9 @@ public class MainActivity extends AppCompatActivity {
         initRecyclerView();
     }
 
-
+    /**
+     * Search engine from cursor.
+     */
     private void searchForNewLocation() {
         new SimpleSearchDialogCompat<>(this, null, "Enter City Name", null,
                 createSampleData(mDatabaseHandler.getAllCities()), new SearchResultListener<CitySearch>() {
@@ -113,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }).show();
     }
-
 
     /**
      * Method to set the weather of other favourites location.
@@ -204,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
                 someHandler.postDelayed(this, 10000);
             }
         }, 10);
-        mCityName = findViewById(R.id.main_city_name);
     }
 
     /**
@@ -302,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerViewLocations.setLayoutManager(layoutManager);
         mRecyclerViewLocations.setAdapter(mLocationRecyclerViewAdapter);
 
-        RecyclerHelper touchHelper = new RecyclerHelper<CardModel>(mCardModelArrayList,
+        RecyclerHelper<CardModel> touchHelper = new RecyclerHelper<>(mCardModelArrayList,
                 (RecyclerView.Adapter) mLocationRecyclerViewAdapter);
         touchHelper.setRecyclerItemDragEnabled(true).setOnDragItemListener(new OnDragListener() {
             @Override

@@ -24,7 +24,7 @@ public final class Constants {
     //WeatherIcons
     private static final String WEATHER_ICONS_ASSET_PATH = "w_icons/";
     public static final String WEATHER_ICONS_DAY = WEATHER_ICONS_ASSET_PATH+"day/";
-    public static final String WEATHER_ICONS_NIGHT = "night/";
+    public static final String WEATHER_ICONS_NIGHT = WEATHER_ICONS_ASSET_PATH+"night/";
 
     //Time
     public static final String DAY = "day";

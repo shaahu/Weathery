@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,6 @@ import java.util.ArrayList;
  */
 public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRecyclerViewAdapter.MyViewHolder> {
 
-    private static final String TAG = "LocationRecyclerViewAda";
     private ArrayList<CardModel> mCardModelArrayList;
     private Context mContext;
     private IRecyclerViewListener mIRecyclerViewListener;
@@ -49,11 +47,10 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
         myViewHolder.cardName.setText(mCardModelArrayList.get(i).getName().toUpperCase());
         try {
-            myViewHolder.cardImage.setImageDrawable(ImageHelper.getDescriptionImageDrawable(mCardModelArrayList.get(i),mContext));
+            myViewHolder.cardImage.setImageDrawable(ImageHelper.getDescriptionImageDrawable(mCardModelArrayList.get(i), mContext));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         myViewHolder.cardTemperature.setText(ValuesConverter.convertTemperatureToCelsius(mCardModelArrayList.get(i).getTemperature()) + "\u2103");
         myViewHolder.cardDescription.setText(mCardModelArrayList.get(i).getDescription());
         myViewHolder.cityId = mCardModelArrayList.get(i).getCityId();
@@ -72,7 +69,7 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
         TextView cardDescription;
         ImageView cardImage;
 
-        public MyViewHolder(@NonNull View itemView) {
+        MyViewHolder(@NonNull View itemView) {
             super(itemView);
             cardName = itemView.findViewById(R.id.card_name);
             cardTemperature = itemView.findViewById(R.id.card_temperature);
