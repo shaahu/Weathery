@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cityCountryRL"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/city"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center|start"
+        android:padding="13dp"
+        android:textAlignment="gravity"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/country"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="countryflag"
+        android:gravity="center|end"
+        android:padding="13dp"
+        android:textSize="22sp" />
+
+</RelativeLayout>

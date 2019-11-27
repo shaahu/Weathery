@@ -18,18 +18,20 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.shahu.weathery.Adapter.LocationRecyclerViewAdapter;
-import com.shahu.weathery.Common.CheckPermissions;
-import com.shahu.weathery.Common.LocationSharedPreferences;
-import com.shahu.weathery.Common.VolleyRequest;
-import com.shahu.weathery.Helper.CitySearch;
-import com.shahu.weathery.Helper.DatabaseHandler;
-import com.shahu.weathery.Helper.Locator;
-import com.shahu.weathery.Helper.ValuesConverter;
-import com.shahu.weathery.Interface.IRecyclerViewListener;
-import com.shahu.weathery.Interface.IVolleyResponse;
-import com.shahu.weathery.Model.CardModel;
-import com.shahu.weathery.Model.OpenWeatherMainResponse;
+import com.shahu.weathery.adapter.LocationRecyclerViewAdapter;
+import com.shahu.weathery.common.CheckPermissions;
+import com.shahu.weathery.common.LocationSharedPreferences;
+import com.shahu.weathery.common.VolleyRequest;
+import com.shahu.weathery.customui.CustomSearchDialog;
+import com.shahu.weathery.helper.DatabaseHandler;
+import com.shahu.weathery.helper.Locator;
+import com.shahu.weathery.helper.ValuesConverter;
+import com.shahu.weathery.interface2.IRecyclerViewListener;
+import com.shahu.weathery.interface2.IVolleyResponse;
+import com.shahu.weathery.interface2.OnSearchItemSelection;
+import com.shahu.weathery.model.CardModel;
+import com.shahu.weathery.model.CitySearchItem;
+import com.shahu.weathery.model.OpenWeatherMainResponse;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -41,15 +43,12 @@ import java.util.Comparator;
 import java.util.Locale;
 import java.util.Map;
 
-import ir.mirrajabi.searchdialog.SimpleSearchDialogCompat;
-import ir.mirrajabi.searchdialog.core.BaseSearchDialogCompat;
-import ir.mirrajabi.searchdialog.core.SearchResultListener;
 import me.rishabhkhanna.recyclerswipedrag.OnDragListener;
 import me.rishabhkhanna.recyclerswipedrag.OnSwipeListener;
 import me.rishabhkhanna.recyclerswipedrag.RecyclerHelper;
 
-import static com.shahu.weathery.Common.Constants.CURRENT_LOCATION_HTTP_REQUEST;
-import static com.shahu.weathery.Common.Constants.WEATHER_HTTP_REQUEST_BY_ID;
+import static com.shahu.weathery.common.Constants.CURRENT_LOCATION_HTTP_REQUEST;
+import static com.shahu.weathery.common.Constants.WEATHER_HTTP_REQUEST_BY_ID;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -79,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void initialization() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode());
         mCheckPermissions = new CheckPermissions(this, MainActivity.this);
         mCityName = findViewById(R.id.main_city_name);
         initSharedPref();
@@ -103,18 +103,18 @@ public class MainActivity extends AppCompatActivity {
      * Search engine from cursor.
      */
     private void searchForNewLocation() {
-        new SimpleSearchDialogCompat<>(this, null, "Enter City Name", null,
-                createSampleData(mDatabaseHandler.getAllCities()), new SearchResultListener<CitySearch>() {
+        CustomSearchDialog customSearchDialog = new CustomSearchDialog(this, mDatabaseHandler.getAllCities());
+        customSearchDialog.show();
+        customSearchDialog.setOnItemSelected(new OnSearchItemSelection() {
             @Override
-            public void onSelected(BaseSearchDialogCompat dialog, CitySearch item, int position) {
-                String cityId = mDatabaseHandler.retrieveCityIdByName(item.getTitle());
+            public void onClick(int position, CitySearchItem citySearchItem) {
+                String cityId = String.valueOf(citySearchItem.getId());
                 if (mLocationSharedPreferences.addNewLocation(cityId))
                     mVolleyRequest.getWeatherByCityId(cityId, WEATHER_HTTP_REQUEST_BY_ID);
                 else
                     Toast.makeText(MainActivity.this, "Already Exist", Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
             }
-        }).show();
+        });
     }
 
     /**
@@ -126,7 +126,8 @@ public class MainActivity extends AppCompatActivity {
         Gson gson = new Gson();
         OpenWeatherMainResponse openWeatherMainResponse = gson.fromJson(jsonObject.toString(), OpenWeatherMainResponse.class);
         CardModel cardModel = new CardModel();
-        cardModel.setName(openWeatherMainResponse.getName() + ", " + openWeatherMainResponse.getSys().getCountry());
+        cardModel.setName(openWeatherMainResponse.getName());
+        cardModel.setCountryCode(openWeatherMainResponse.getSys().getCountry());
         cardModel.setPosition(Integer.parseInt(mLocationSharedPreferences.getPositionByCityId(openWeatherMainResponse.getId())));
         cardModel.setTemperature(String.valueOf(openWeatherMainResponse.getMain().getTemp()));
         cardModel.setWeatherItem(openWeatherMainResponse.getWeather().get(0));
@@ -272,20 +273,6 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }.start();
-    }
-
-    /**
-     * creates list of cities for search.
-     *
-     * @param allCities data
-     * @return list type
-     */
-    private ArrayList<CitySearch> createSampleData(ArrayList<String> allCities) {
-        ArrayList<CitySearch> items = new ArrayList<>();
-        for (String e : allCities) {
-            items.add(new CitySearch(e));
-        }
-        return items;
     }
 
     /**

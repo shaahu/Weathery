@@ -6,28 +6,28 @@
 
     <RelativeLayout
         android:id="@+id/card_ll"
-        android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/card_name"
+        android:layout_centerInParent="true"
         android:layout_marginTop="10dp">
 
         <ImageView
             android:id="@+id/card_image"
             android:layout_width="150dp"
-            android:layout_centerVertical="true"
             android:layout_height="120dp"
+            android:layout_centerVertical="true"
             android:src="@drawable/rain_svg2" />
 
         <TextView
-            android:layout_marginStart="20dp"
             android:id="@+id/card_temperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/card_image"
-            android:gravity="center"
             android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@id/card_image"
             android:fontFamily="@font/oblivia"
+            android:gravity="center"
             android:textAlignment="center"
             android:textSize="60sp" />
 
@@ -35,32 +35,41 @@
 
     <TextView
         android:id="@+id/card_desc"
-        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/card_ll"
         android:layout_centerHorizontal="true"
-        android:textAlignment="center"
-        android:letterSpacing="0.5"
+        android:layout_marginTop="10dp"
         android:fontFamily="@font/montserrat_regular"
-        android:layout_below="@id/card_ll"/>
+        android:letterSpacing="0.5"
+        android:textAlignment="center" />
 
     <View
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/card_desc"
         android:layout_width="fill_parent"
-        android:layout_marginHorizontal="10dp"
         android:layout_height="1dp"
+        android:layout_below="@id/card_desc"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="10dp"
         android:background="@color/grey_400" />
 
 
     <TextView
-        android:layout_marginTop="15dp"
         android:id="@+id/card_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
         android:fontFamily="@font/vitro_bold"
         android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/card_flag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/card_name"
+        android:layout_marginStart="10dp"
+        android:textSize="22sp"
+        android:layout_alignParentEnd="true"/>
 
 
 </RelativeLayout>
