@@ -25,15 +25,16 @@ import com.shahu.weathery.common.VolleyRequest;
 import com.shahu.weathery.customui.CustomSearchDialog;
 import com.shahu.weathery.helper.DatabaseHandler;
 import com.shahu.weathery.helper.Locator;
+import com.shahu.weathery.helper.RecyclerViewItemHelper;
 import com.shahu.weathery.helper.ValuesConverter;
 import com.shahu.weathery.interface2.IRecyclerViewListener;
 import com.shahu.weathery.interface2.IVolleyResponse;
+import com.shahu.weathery.interface2.OnDragListener;
 import com.shahu.weathery.interface2.OnSearchItemSelection;
+import com.shahu.weathery.interface2.OnSwipeListener;
 import com.shahu.weathery.model.CardModel;
 import com.shahu.weathery.model.CitySearchItem;
 import com.shahu.weathery.model.OpenWeatherMainResponse;
-
-import org.jetbrains.annotations.Nullable;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,10 +43,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
 import java.util.Map;
-
-import me.rishabhkhanna.recyclerswipedrag.OnDragListener;
-import me.rishabhkhanna.recyclerswipedrag.OnSwipeListener;
-import me.rishabhkhanna.recyclerswipedrag.RecyclerHelper;
 
 import static com.shahu.weathery.common.Constants.CURRENT_LOCATION_HTTP_REQUEST;
 import static com.shahu.weathery.common.Constants.WEATHER_HTTP_REQUEST_BY_ID;
@@ -290,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerViewLocations.setLayoutManager(layoutManager);
         mRecyclerViewLocations.setAdapter(mLocationRecyclerViewAdapter);
 
-        RecyclerHelper<CardModel> touchHelper = new RecyclerHelper<>(mCardModelArrayList,
+        RecyclerViewItemHelper<CardModel> touchHelper = new RecyclerViewItemHelper<>(mCardModelArrayList,
                 (RecyclerView.Adapter) mLocationRecyclerViewAdapter);
         touchHelper.setRecyclerItemDragEnabled(true).setOnDragItemListener(new OnDragListener() {
             @Override
@@ -301,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
         });
         touchHelper.setRecyclerItemSwipeEnabled(true).setOnSwipeItemListener(new OnSwipeListener() {
             @Override
-            public void onSwipeItemListener(@Nullable RecyclerView.ViewHolder oldPosition) {
+            public void onSwipeItemListener(RecyclerView.ViewHolder oldPosition) {
                 LocationRecyclerViewAdapter.MyViewHolder myViewHolder = (LocationRecyclerViewAdapter.MyViewHolder) oldPosition;
                 if (myViewHolder != null) {
                     Log.d(TAG, "onSwipeItemListener: remove location: " + mLocationSharedPreferences.removeLocation(myViewHolder.cityId));
