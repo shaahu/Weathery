@@ -1,9 +1,10 @@
 package com.shahu.weathery.helper;
 
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.shahu.weathery.interface2.OnDragListener;
 import com.shahu.weathery.interface2.OnSwipeListener;

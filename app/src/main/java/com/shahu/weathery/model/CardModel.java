@@ -1,6 +1,7 @@
 package com.shahu.weathery.model;
 
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 /**
  * Created by Shahu Ronghe on 20, September, 2019
