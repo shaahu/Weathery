@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
         OpenWeatherMainResponse openWeatherMainResponse = gson.fromJson(jsonObject.toString(), OpenWeatherMainResponse.class);
         CardModel cardModel = new CardModel();
         cardModel.setName("Current Location");
+        cardModel.setCountryCode(openWeatherMainResponse.getSys().getCountry());
         cardModel.setPosition(0);
         cardModel.setCityId(openWeatherMainResponse.getId());
         cardModel.setTemperature(String.valueOf(openWeatherMainResponse.getMain().getTemp()));
