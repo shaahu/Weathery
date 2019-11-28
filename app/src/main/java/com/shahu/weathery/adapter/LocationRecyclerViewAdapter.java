@@ -65,7 +65,7 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public int cityId;
+        public String cityId;
         TextView cardName;
         TextView cardTemperature;
         TextView cardDescription;

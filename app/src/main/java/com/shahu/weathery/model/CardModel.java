@@ -14,10 +14,11 @@ public class CardModel {
     private WeatherItem mWeatherItem;
     private String mTemperature;
     private String mDescription;
-    private int mCityId;
+    private String mCityId;
     private String mDayNight;
 
-    public CardModel(String name, String countryCode, int position, WeatherItem weatherItem, String temperature, String description, int cityId, String dayNight) {
+    public CardModel(String name, String countryCode, int position, WeatherItem weatherItem, String temperature, String description,
+                     String cityId, String dayNight) {
         mName = name;
         mCountryCode = countryCode;
         mPosition = position;
@@ -56,11 +57,11 @@ public class CardModel {
         mDayNight = dayNight;
     }
 
-    public int getCityId() {
+    public String getCityId() {
         return mCityId;
     }
 
-    public void setCityId(int cityId) {
+    public void setCityId(String cityId) {
         mCityId = cityId;
     }
 

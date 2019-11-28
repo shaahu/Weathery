@@ -1,6 +1,7 @@
 package com.shahu.weathery;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +26,7 @@ import com.shahu.weathery.common.CheckPermissions;
 import com.shahu.weathery.common.LocationSharedPreferences;
 import com.shahu.weathery.common.VolleyRequest;
 import com.shahu.weathery.customui.CustomSearchDialog;
+import com.shahu.weathery.customui.LoadingBox;
 import com.shahu.weathery.helper.DatabaseHandler;
 import com.shahu.weathery.helper.Locator;
 import com.shahu.weathery.helper.RecyclerViewItemHelper;
@@ -61,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
     private VolleyRequest mVolleyRequest;
     private IVolleyResponse mIVolleyResponseCallback = null;
     private LocationRecyclerViewAdapter mLocationRecyclerViewAdapter;
-
+    private CardView mLoadingBoxCardView;
+    private int requestCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode());
         mCheckPermissions = new CheckPermissions(this, MainActivity.this);
         mCityName = findViewById(R.id.main_city_name);
+        requestCount = 0;
         initSharedPref();
         initVolleyCallback();
         initDatabase();
@@ -86,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         mCheckPermissions.checkApplicationPermissions();
         mRecyclerViewLocations = findViewById(R.id.locations);
         mAddNewButton = findViewById(R.id.add_new_loc_btn);
+        mLoadingBoxCardView = findViewById(R.id.cv_loading);
         mAddNewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,11 +132,11 @@ public class MainActivity extends AppCompatActivity {
         CardModel cardModel = new CardModel();
         cardModel.setName(openWeatherMainResponse.getName());
         cardModel.setCountryCode(openWeatherMainResponse.getSys().getCountry());
-        cardModel.setPosition(Integer.parseInt(mLocationSharedPreferences.getPositionByCityId(openWeatherMainResponse.getId())));
+        cardModel.setPosition(Integer.parseInt(mLocationSharedPreferences.getPositionByCityId(String.valueOf(openWeatherMainResponse.getId()))));
         cardModel.setTemperature(String.valueOf(openWeatherMainResponse.getMain().getTemp()));
         cardModel.setWeatherItem(openWeatherMainResponse.getWeather().get(0));
         cardModel.setDescription(openWeatherMainResponse.getWeather().get(0).getDescription().toUpperCase());
-        cardModel.setCityId(openWeatherMainResponse.getId());
+        cardModel.setCityId(String.valueOf(openWeatherMainResponse.getId()));
         cardModel.setDayNight(ValuesConverter.getDayNight(openWeatherMainResponse));
         mCardModelArrayList.add(cardModel);
         Collections.sort(mCardModelArrayList, new Comparator<CardModel>() {
@@ -154,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         cardModel.setName("Current Location");
         cardModel.setCountryCode(openWeatherMainResponse.getSys().getCountry());
         cardModel.setPosition(0);
-        cardModel.setCityId(openWeatherMainResponse.getId());
+        cardModel.setCityId(String.valueOf(openWeatherMainResponse.getId()));
         cardModel.setTemperature(String.valueOf(openWeatherMainResponse.getMain().getTemp()));
         cardModel.setWeatherItem(openWeatherMainResponse.getWeather().get(0));
         cardModel.setDayNight(ValuesConverter.getDayNight(openWeatherMainResponse));
@@ -172,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void fetchAllData(Map<String, ?> allLocations) {
         Log.d(TAG, "fetchAllData: " + allLocations);
+        requestCount = allLocations.size();
         for (Map.Entry<String, ?> entry : allLocations.entrySet()) {
             mVolleyRequest.getWeatherByCityId(entry.getValue().toString(), WEATHER_HTTP_REQUEST_BY_ID);
         }
@@ -216,6 +223,7 @@ public class MainActivity extends AppCompatActivity {
         locationHelper.getLocation(Locator.Method.NETWORK_THEN_GPS, new Locator.Listener() {
             @Override
             public void onLocationFound(Location location) {
+                mLoadingBoxCardView.setVisibility(View.VISIBLE);
                 mVolleyRequest.getWeatherByCoords(CURRENT_LOCATION_HTTP_REQUEST, location.getLongitude(), location.getLatitude());
             }
 
@@ -244,12 +252,25 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case WEATHER_HTTP_REQUEST_BY_ID:
                         addFavouriteCityWeather(jsonObject);
+                        requestCount--;
+                        if (requestCount <= 1) {
+                            mLoadingBoxCardView.setVisibility(View.GONE);
+                        }
                         break;
                 }
             }
 
             @Override
             public void onRequestFailure(VolleyError volleyError, String requestType) {
+                switch (requestType) {
+                    case WEATHER_HTTP_REQUEST_BY_ID:
+                        requestCount--;
+                        if (requestCount <= 1) {
+                            mLoadingBoxCardView.setVisibility(View.GONE);
+                        }
+                        break;
+                }
+
                 Toast.makeText(MainActivity.this, volleyError.toString(), Toast.LENGTH_SHORT).show();
             }
         };
@@ -280,8 +301,8 @@ public class MainActivity extends AppCompatActivity {
     private void initRecyclerView() {
         IRecyclerViewListener recyclerViewListener = new IRecyclerViewListener() {
             @Override
-            public void onSingleShortClickListener(int cityId) {
-                Log.d(TAG, "onSingleShortClickListener: " + cityId);
+            public void onSingleShortClickListener(String cityId) {
+                openDetailedView(cityId);
             }
         };
         mLocationRecyclerViewAdapter = new LocationRecyclerViewAdapter(mCardModelArrayList, this, recyclerViewListener);
@@ -316,6 +337,17 @@ public class MainActivity extends AppCompatActivity {
      */
     private void initSharedPref() {
         mLocationSharedPreferences = new LocationSharedPreferences(this);
-        Log.d(TAG, "initSharedPref: " + mLocationSharedPreferences.getAllLocations());
+    }
+
+    /**
+     * gets called when click on list item to show detailed view.
+     *
+     * @param cityId city identifier
+     */
+    private void openDetailedView(String cityId) {
+        Intent intent = new Intent(this, WeatherDetail.class);
+        intent.putExtra("id", cityId);
+        startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 }

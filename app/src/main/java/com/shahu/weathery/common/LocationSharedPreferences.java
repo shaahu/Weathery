@@ -56,17 +56,16 @@ public class LocationSharedPreferences {
         return mSharedPreferences;
     }
 
-    public String getPositionByCityId(int id) {
-        String value = String.valueOf(id);
+    public String getPositionByCityId(String id) {
         for (Map.Entry<String, ?> entry : mSharedPreferences.getAll().entrySet()) {
-            if (value.equals(entry.getValue())) {
+            if (id.equals(entry.getValue())) {
                 return entry.getKey();
             }
         }
         return null;
     }
 
-    public boolean removeLocation(int cityId) {
+    public boolean removeLocation(String cityId) {
         String key = getPositionByCityId(cityId);
         if (!mSharedPreferences.contains(key)) {
             return false;

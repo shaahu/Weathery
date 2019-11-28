@@ -6,5 +6,5 @@ package com.shahu.weathery.interface2;
  */
 public interface IRecyclerViewListener {
 
-    void onSingleShortClickListener(int cityId);
+    void onSingleShortClickListener(String cityId);
 }
