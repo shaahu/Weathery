@@ -1,12 +1,13 @@
 package com.shahu.weathery.helper;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import com.shahu.weathery.model.OpenWeatherMainResponse;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import static com.shahu.weathery.common.Constants.DAY;
 import static com.shahu.weathery.common.Constants.NIGHT;
@@ -28,27 +29,21 @@ public class ValuesConverter {
         return String.format("%.0f", celsius);
     }
 
-    public static String convertUnixTime(long epoch) {
-        Date date = new java.util.Date(epoch * 1000L);
-        SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm");
-        String formattedDate = sdf.format(date);
-        System.out.println(formattedDate);
-        return formattedDate;
+    public static DateTime convertUnixTime(long epoch, int secShift) {
+        DateTime dateTime = new DateTime((long) epoch * 1000);
+        dateTime = dateTime.withZone(DateTimeZone.UTC);
+        dateTime = dateTime.plusSeconds(secShift);
+        return dateTime;
     }
 
     public static String getDayNight(OpenWeatherMainResponse openWeatherMainResponse) {
-        long sunrise = openWeatherMainResponse.getSys().getSunrise();
-        long sunset = openWeatherMainResponse.getSys().getSunset();
-        long current = openWeatherMainResponse.getDt();
-        Log.d(TAG, "getDayNight: ford " + sunrise + " " + sunset + " " + current);
-
-        if (current < sunset && current > sunrise) {
+        int secShift = openWeatherMainResponse.getTimezone();
+        int sunrise = convertUnixTime(openWeatherMainResponse.getSys().getSunrise(), secShift).getHourOfDay();
+        int sunset = convertUnixTime(openWeatherMainResponse.getSys().getSunset(), secShift).getHourOfDay();
+        int current = convertUnixTime(openWeatherMainResponse.getDt(), secShift).getHourOfDay();
+        if (current > sunrise && current < sunset)
             return DAY;
-        }
-        if (current > sunset) {
-            return NIGHT;
-        }
-        return DAY;
+        return NIGHT;
     }
 
     public static String getCountryImage(String countryCode) {
@@ -63,5 +58,13 @@ public class ValuesConverter {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static String getTimeForCity(long time, int secondsShift) {
+        String newTime = null;
+        DateTime dateTime = convertUnixTime(time,secondsShift);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("EEEE, HH:mm");
+        newTime =  dateTimeFormatter.print(dateTime);
+        return newTime;
     }
 }

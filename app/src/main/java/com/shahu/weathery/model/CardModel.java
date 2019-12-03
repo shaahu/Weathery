@@ -16,9 +16,10 @@ public class CardModel {
     private String mDescription;
     private String mCityId;
     private String mDayNight;
+    private long mTime;
+    private int secondsShift;
 
-    public CardModel(String name, String countryCode, int position, WeatherItem weatherItem, String temperature, String description,
-                     String cityId, String dayNight) {
+    public CardModel(String name, String countryCode, int position, WeatherItem weatherItem, String temperature, String description, String cityId, String dayNight, long time, int secondsShift) {
         mName = name;
         mCountryCode = countryCode;
         mPosition = position;
@@ -27,6 +28,24 @@ public class CardModel {
         mDescription = description;
         mCityId = cityId;
         mDayNight = dayNight;
+        mTime = time;
+        this.secondsShift = secondsShift;
+    }
+
+    public long getTime() {
+        return mTime;
+    }
+
+    public void setTime(long time) {
+        mTime = time;
+    }
+
+    public int getSecondsShift() {
+        return secondsShift;
+    }
+
+    public void setSecondsShift(int secondsShift) {
+        this.secondsShift = secondsShift;
     }
 
     public String getCountryCode() {

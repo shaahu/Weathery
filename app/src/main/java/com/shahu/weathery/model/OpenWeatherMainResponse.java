@@ -7,14 +7,26 @@ import com.google.gson.annotations.SerializedName;
 @Generated("com.robohorse.robopojogenerator")
 public class OpenWeatherMainResponse{
 
+	@SerializedName("visibility")
+	private int visibility;
+
+	@SerializedName("timezone")
+	private int timezone;
+
+	@SerializedName("main")
+	private Main main;
+
+	@SerializedName("clouds")
+	private Clouds clouds;
+
+	@SerializedName("sys")
+	private Sys sys;
+
 	@SerializedName("dt")
-	private long dt;
+	private int dt;
 
 	@SerializedName("coord")
 	private Coord coord;
-
-	@SerializedName("visibility")
-	private int visibility;
 
 	@SerializedName("weather")
 	private List<WeatherItem> weather;
@@ -25,17 +37,8 @@ public class OpenWeatherMainResponse{
 	@SerializedName("cod")
 	private int cod;
 
-	@SerializedName("main")
-	private Main main;
-
-	@SerializedName("clouds")
-	private Clouds clouds;
-
 	@SerializedName("id")
 	private int id;
-
-	@SerializedName("sys")
-	private Sys sys;
 
 	@SerializedName("base")
 	private String base;
@@ -43,11 +46,51 @@ public class OpenWeatherMainResponse{
 	@SerializedName("wind")
 	private Wind wind;
 
-	public void setDt(long dt){
+	public void setVisibility(int visibility){
+		this.visibility = visibility;
+	}
+
+	public int getVisibility(){
+		return visibility;
+	}
+
+	public void setTimezone(int timezone){
+		this.timezone = timezone;
+	}
+
+	public int getTimezone(){
+		return timezone;
+	}
+
+	public void setMain(Main main){
+		this.main = main;
+	}
+
+	public Main getMain(){
+		return main;
+	}
+
+	public void setClouds(Clouds clouds){
+		this.clouds = clouds;
+	}
+
+	public Clouds getClouds(){
+		return clouds;
+	}
+
+	public void setSys(Sys sys){
+		this.sys = sys;
+	}
+
+	public Sys getSys(){
+		return sys;
+	}
+
+	public void setDt(int dt){
 		this.dt = dt;
 	}
 
-	public long getDt(){
+	public int getDt(){
 		return dt;
 	}
 
@@ -57,14 +100,6 @@ public class OpenWeatherMainResponse{
 
 	public Coord getCoord(){
 		return coord;
-	}
-
-	public void setVisibility(int visibility){
-		this.visibility = visibility;
-	}
-
-	public int getVisibility(){
-		return visibility;
 	}
 
 	public void setWeather(List<WeatherItem> weather){
@@ -91,36 +126,12 @@ public class OpenWeatherMainResponse{
 		return cod;
 	}
 
-	public void setMain(Main main){
-		this.main = main;
-	}
-
-	public Main getMain(){
-		return main;
-	}
-
-	public void setClouds(Clouds clouds){
-		this.clouds = clouds;
-	}
-
-	public Clouds getClouds(){
-		return clouds;
-	}
-
 	public void setId(int id){
 		this.id = id;
 	}
 
 	public int getId(){
 		return id;
-	}
-
-	public void setSys(Sys sys){
-		this.sys = sys;
-	}
-
-	public Sys getSys(){
-		return sys;
 	}
 
 	public void setBase(String base){
@@ -143,16 +154,17 @@ public class OpenWeatherMainResponse{
  	public String toString(){
 		return 
 			"OpenWeatherMainResponse{" + 
-			"dt = '" + dt + '\'' + 
+			"visibility = '" + visibility + '\'' + 
+			",timezone = '" + timezone + '\'' + 
+			",main = '" + main + '\'' + 
+			",clouds = '" + clouds + '\'' + 
+			",sys = '" + sys + '\'' + 
+			",dt = '" + dt + '\'' + 
 			",coord = '" + coord + '\'' + 
-			",visibility = '" + visibility + '\'' + 
 			",weather = '" + weather + '\'' + 
 			",name = '" + name + '\'' + 
 			",cod = '" + cod + '\'' + 
-			",main = '" + main + '\'' + 
-			",clouds = '" + clouds + '\'' + 
 			",id = '" + id + '\'' + 
-			",sys = '" + sys + '\'' + 
 			",base = '" + base + '\'' + 
 			",wind = '" + wind + '\'' + 
 			"}";

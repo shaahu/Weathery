@@ -25,6 +25,7 @@ public class ImageHelper {
     private static final String SNOW_MAIN = "Snow";
     private static final String CLEAR_MAIN = "Clear";
     private static final String CLOUDS_MAIN = "Clouds";
+    private static final String FILE_NOT_FOUND_EXP = "na";
     private static Context mContext;
     private static String mTime;
 
@@ -34,6 +35,8 @@ public class ImageHelper {
         final String desc = cardModel.getWeatherItem().getDescription();
         mTime = cardModel.getDayNight();
         switch (main) {
+            case FILE_NOT_FOUND_EXP:
+                return buildImagePath("default_weather_icon");
             case CLEAR_MAIN:
                 return getClearDescription();
             case CLOUDS_MAIN:

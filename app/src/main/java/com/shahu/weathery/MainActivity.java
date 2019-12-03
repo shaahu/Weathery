@@ -26,7 +26,6 @@ import com.shahu.weathery.common.CheckPermissions;
 import com.shahu.weathery.common.LocationSharedPreferences;
 import com.shahu.weathery.common.VolleyRequest;
 import com.shahu.weathery.customui.CustomSearchDialog;
-import com.shahu.weathery.customui.LoadingBox;
 import com.shahu.weathery.helper.DatabaseHandler;
 import com.shahu.weathery.helper.Locator;
 import com.shahu.weathery.helper.RecyclerViewItemHelper;
@@ -39,6 +38,8 @@ import com.shahu.weathery.interface2.OnSwipeListener;
 import com.shahu.weathery.model.CardModel;
 import com.shahu.weathery.model.CitySearchItem;
 import com.shahu.weathery.model.OpenWeatherMainResponse;
+
+import net.danlew.android.joda.JodaTimeAndroid;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode());
         mCheckPermissions = new CheckPermissions(this, MainActivity.this);
+        JodaTimeAndroid.init(this);
         mCityName = findViewById(R.id.main_city_name);
         requestCount = 0;
         initSharedPref();
@@ -130,10 +132,16 @@ public class MainActivity extends AppCompatActivity {
         Gson gson = new Gson();
         OpenWeatherMainResponse openWeatherMainResponse = gson.fromJson(jsonObject.toString(), OpenWeatherMainResponse.class);
         CardModel cardModel = new CardModel();
-        cardModel.setName(openWeatherMainResponse.getName());
+        String cityName = openWeatherMainResponse.getName();
+        if (cityName.length() > 16) {
+            cityName = cityName.substring(0, 16) + "...";
+        }
+        cardModel.setName(cityName);
         cardModel.setCountryCode(openWeatherMainResponse.getSys().getCountry());
         cardModel.setPosition(Integer.parseInt(mLocationSharedPreferences.getPositionByCityId(String.valueOf(openWeatherMainResponse.getId()))));
         cardModel.setTemperature(String.valueOf(openWeatherMainResponse.getMain().getTemp()));
+        cardModel.setTime(openWeatherMainResponse.getDt());
+        cardModel.setSecondsShift(openWeatherMainResponse.getTimezone());
         cardModel.setWeatherItem(openWeatherMainResponse.getWeather().get(0));
         cardModel.setDescription(openWeatherMainResponse.getWeather().get(0).getDescription().toUpperCase());
         cardModel.setCityId(String.valueOf(openWeatherMainResponse.getId()));
@@ -249,6 +257,10 @@ public class MainActivity extends AppCompatActivity {
                     case CURRENT_LOCATION_HTTP_REQUEST:
                         addCurrentLocationData(jsonObject);
                         fetchAllData(mLocationSharedPreferences.getAllLocations());
+                        requestCount--;
+                        if (requestCount <= 1) {
+                            mLoadingBoxCardView.setVisibility(View.GONE);
+                        }
                         break;
                     case WEATHER_HTTP_REQUEST_BY_ID:
                         addFavouriteCityWeather(jsonObject);
@@ -270,7 +282,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                         break;
                 }
-
                 Toast.makeText(MainActivity.this, volleyError.toString(), Toast.LENGTH_SHORT).show();
             }
         };
