@@ -1,0 +1,111 @@
+package com.shahu.weathery.model.forecast;
+
+import javax.annotation.Generated;
+import com.google.gson.annotations.SerializedName;
+
+@Generated("com.robohorse.robopojogenerator")
+public class Main{
+
+	@SerializedName("temp")
+	private double temp;
+
+	@SerializedName("temp_min")
+	private double tempMin;
+
+	@SerializedName("grnd_level")
+	private int grndLevel;
+
+	@SerializedName("temp_kf")
+	private int tempKf;
+
+	@SerializedName("humidity")
+	private int humidity;
+
+	@SerializedName("pressure")
+	private int pressure;
+
+	@SerializedName("sea_level")
+	private int seaLevel;
+
+	@SerializedName("temp_max")
+	private double tempMax;
+
+	public void setTemp(double temp){
+		this.temp = temp;
+	}
+
+	public double getTemp(){
+		return temp;
+	}
+
+	public void setTempMin(double tempMin){
+		this.tempMin = tempMin;
+	}
+
+	public double getTempMin(){
+		return tempMin;
+	}
+
+	public void setGrndLevel(int grndLevel){
+		this.grndLevel = grndLevel;
+	}
+
+	public int getGrndLevel(){
+		return grndLevel;
+	}
+
+	public void setTempKf(int tempKf){
+		this.tempKf = tempKf;
+	}
+
+	public int getTempKf(){
+		return tempKf;
+	}
+
+	public void setHumidity(int humidity){
+		this.humidity = humidity;
+	}
+
+	public int getHumidity(){
+		return humidity;
+	}
+
+	public void setPressure(int pressure){
+		this.pressure = pressure;
+	}
+
+	public int getPressure(){
+		return pressure;
+	}
+
+	public void setSeaLevel(int seaLevel){
+		this.seaLevel = seaLevel;
+	}
+
+	public int getSeaLevel(){
+		return seaLevel;
+	}
+
+	public void setTempMax(double tempMax){
+		this.tempMax = tempMax;
+	}
+
+	public double getTempMax(){
+		return tempMax;
+	}
+
+	@Override
+ 	public String toString(){
+		return 
+			"Main{" + 
+			"temp = '" + temp + '\'' + 
+			",temp_min = '" + tempMin + '\'' + 
+			",grnd_level = '" + grndLevel + '\'' + 
+			",temp_kf = '" + tempKf + '\'' + 
+			",humidity = '" + humidity + '\'' + 
+			",pressure = '" + pressure + '\'' + 
+			",sea_level = '" + seaLevel + '\'' + 
+			",temp_max = '" + tempMax + '\'' + 
+			"}";
+		}
+}

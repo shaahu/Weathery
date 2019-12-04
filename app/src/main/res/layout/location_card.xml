@@ -53,13 +53,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <TextView
+    <com.shahu.weathery.customui.CitynameTextView
         android:id="@+id/card_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:fontFamily="@font/walkway_ultrabold"
         android:letterSpacing="0.1"
         android:textSize="22sp" />
 

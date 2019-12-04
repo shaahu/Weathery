@@ -11,6 +11,7 @@ public final class Constants {
     final static String WEATHER_BY_NAME_STRING = "weather?q=";
     final static String WEATHER_BY_COORDS_STRING = "weather?";
     final static String WEATHER_BY_CITY_ID = "weather?id=";
+    final static String WEATHER_FORECAST_BY_CITY_ID = "forecast?id=";
 
     //Temperature units call
     public final static String METRIC_UNIT = "&units=metric";
@@ -19,7 +20,8 @@ public final class Constants {
 
     //RequestTypes
     public final static String CURRENT_LOCATION_HTTP_REQUEST = "currentLocationWeatherRequest";
-    public final static String WEATHER_HTTP_REQUEST_BY_ID = "weatherByCityId";
+    public final static String WEATHER_BY_ID_HTTP_REQUEST = "weatherByCityId";
+    public final static String WEATHER_FORECAST_BY_ID_HTTP_REQUEST = "weatherForecastByCityId";
 
     //WeatherIcons
     private static final String WEATHER_ICONS_ASSET_PATH = "w_icons/";

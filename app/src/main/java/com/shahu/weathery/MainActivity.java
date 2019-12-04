@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,7 +36,7 @@ import com.shahu.weathery.interface2.OnSearchItemSelection;
 import com.shahu.weathery.interface2.OnSwipeListener;
 import com.shahu.weathery.model.CardModel;
 import com.shahu.weathery.model.CitySearchItem;
-import com.shahu.weathery.model.OpenWeatherMainResponse;
+import com.shahu.weathery.model.common.MainResponse;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
@@ -50,7 +49,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.shahu.weathery.common.Constants.CURRENT_LOCATION_HTTP_REQUEST;
-import static com.shahu.weathery.common.Constants.WEATHER_HTTP_REQUEST_BY_ID;
+import static com.shahu.weathery.common.Constants.WEATHER_BY_ID_HTTP_REQUEST;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -65,8 +64,6 @@ public class MainActivity extends AppCompatActivity {
     private VolleyRequest mVolleyRequest;
     private IVolleyResponse mIVolleyResponseCallback = null;
     private LocationRecyclerViewAdapter mLocationRecyclerViewAdapter;
-    private CardView mLoadingBoxCardView;
-    private int requestCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
         mCheckPermissions = new CheckPermissions(this, MainActivity.this);
         JodaTimeAndroid.init(this);
         mCityName = findViewById(R.id.main_city_name);
-        requestCount = 0;
         initSharedPref();
         initVolleyCallback();
         initDatabase();
@@ -93,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
         mCheckPermissions.checkApplicationPermissions();
         mRecyclerViewLocations = findViewById(R.id.locations);
         mAddNewButton = findViewById(R.id.add_new_loc_btn);
-        mLoadingBoxCardView = findViewById(R.id.cv_loading);
         mAddNewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(int position, CitySearchItem citySearchItem) {
                 String cityId = String.valueOf(citySearchItem.getId());
                 if (mLocationSharedPreferences.addNewLocation(cityId))
-                    mVolleyRequest.getWeatherByCityId(cityId, WEATHER_HTTP_REQUEST_BY_ID);
+                    mVolleyRequest.getWeatherByCityId(cityId, WEATHER_BY_ID_HTTP_REQUEST);
                 else
                     Toast.makeText(MainActivity.this, "Already Exist", Toast.LENGTH_SHORT).show();
             }
@@ -130,22 +125,22 @@ public class MainActivity extends AppCompatActivity {
      */
     private void addFavouriteCityWeather(JsonObject jsonObject) {
         Gson gson = new Gson();
-        OpenWeatherMainResponse openWeatherMainResponse = gson.fromJson(jsonObject.toString(), OpenWeatherMainResponse.class);
+        MainResponse mainResponse = gson.fromJson(jsonObject.toString(), MainResponse.class);
         CardModel cardModel = new CardModel();
-        String cityName = openWeatherMainResponse.getName();
+        String cityName = mainResponse.getName();
         if (cityName.length() > 16) {
             cityName = cityName.substring(0, 16) + "...";
         }
         cardModel.setName(cityName);
-        cardModel.setCountryCode(openWeatherMainResponse.getSys().getCountry());
-        cardModel.setPosition(Integer.parseInt(mLocationSharedPreferences.getPositionByCityId(String.valueOf(openWeatherMainResponse.getId()))));
-        cardModel.setTemperature(String.valueOf(openWeatherMainResponse.getMain().getTemp()));
-        cardModel.setTime(openWeatherMainResponse.getDt());
-        cardModel.setSecondsShift(openWeatherMainResponse.getTimezone());
-        cardModel.setWeatherItem(openWeatherMainResponse.getWeather().get(0));
-        cardModel.setDescription(openWeatherMainResponse.getWeather().get(0).getDescription().toUpperCase());
-        cardModel.setCityId(String.valueOf(openWeatherMainResponse.getId()));
-        cardModel.setDayNight(ValuesConverter.getDayNight(openWeatherMainResponse));
+        cardModel.setCountryCode(mainResponse.getSys().getCountry());
+        cardModel.setPosition(Integer.parseInt(mLocationSharedPreferences.getPositionByCityId(String.valueOf(mainResponse.getId()))));
+        cardModel.setTemperature(String.valueOf(mainResponse.getMain().getTemp()));
+        cardModel.setTime(mainResponse.getDt());
+        cardModel.setSecondsShift(mainResponse.getTimezone());
+        cardModel.setWeatherItem(mainResponse.getWeather().get(0));
+        cardModel.setDescription(mainResponse.getWeather().get(0).getDescription().toUpperCase());
+        cardModel.setCityId(String.valueOf(mainResponse.getId()));
+        cardModel.setDayNight(ValuesConverter.getDayNight(mainResponse));
         mCardModelArrayList.add(cardModel);
         Collections.sort(mCardModelArrayList, new Comparator<CardModel>() {
             @Override
@@ -163,19 +158,19 @@ public class MainActivity extends AppCompatActivity {
      */
     private void addCurrentLocationData(JsonObject jsonObject) {
         Gson gson = new Gson();
-        OpenWeatherMainResponse openWeatherMainResponse = gson.fromJson(jsonObject.toString(), OpenWeatherMainResponse.class);
+        MainResponse mainResponse = gson.fromJson(jsonObject.toString(), MainResponse.class);
         CardModel cardModel = new CardModel();
         cardModel.setName("Current Location");
-        cardModel.setCountryCode(openWeatherMainResponse.getSys().getCountry());
+        cardModel.setCountryCode(mainResponse.getSys().getCountry());
         cardModel.setPosition(0);
-        cardModel.setCityId(String.valueOf(openWeatherMainResponse.getId()));
-        cardModel.setTemperature(String.valueOf(openWeatherMainResponse.getMain().getTemp()));
-        cardModel.setWeatherItem(openWeatherMainResponse.getWeather().get(0));
-        cardModel.setDayNight(ValuesConverter.getDayNight(openWeatherMainResponse));
-        cardModel.setDescription(openWeatherMainResponse.getWeather().get(0).getDescription().toUpperCase());
+        cardModel.setCityId(String.valueOf(mainResponse.getId()));
+        cardModel.setTemperature(String.valueOf(mainResponse.getMain().getTemp()));
+        cardModel.setWeatherItem(mainResponse.getWeather().get(0));
+        cardModel.setDayNight(ValuesConverter.getDayNight(mainResponse));
+        cardModel.setDescription(mainResponse.getWeather().get(0).getDescription().toUpperCase());
         mCardModelArrayList.add(cardModel);
         mLocationRecyclerViewAdapter.notifyDataSetChanged();
-        mCityName.setText(String.format("%s, %s", openWeatherMainResponse.getName(), openWeatherMainResponse.getSys().getCountry()));
+        mCityName.setText(String.format("%s, %s", mainResponse.getName(), mainResponse.getSys().getCountry()));
     }
 
 
@@ -186,9 +181,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private void fetchAllData(Map<String, ?> allLocations) {
         Log.d(TAG, "fetchAllData: " + allLocations);
-        requestCount = allLocations.size();
         for (Map.Entry<String, ?> entry : allLocations.entrySet()) {
-            mVolleyRequest.getWeatherByCityId(entry.getValue().toString(), WEATHER_HTTP_REQUEST_BY_ID);
+            mVolleyRequest.getWeatherByCityId(entry.getValue().toString(), WEATHER_BY_ID_HTTP_REQUEST);
         }
     }
 
@@ -231,7 +225,6 @@ public class MainActivity extends AppCompatActivity {
         locationHelper.getLocation(Locator.Method.NETWORK_THEN_GPS, new Locator.Listener() {
             @Override
             public void onLocationFound(Location location) {
-                mLoadingBoxCardView.setVisibility(View.VISIBLE);
                 mVolleyRequest.getWeatherByCoords(CURRENT_LOCATION_HTTP_REQUEST, location.getLongitude(), location.getLatitude());
             }
 
@@ -257,17 +250,9 @@ public class MainActivity extends AppCompatActivity {
                     case CURRENT_LOCATION_HTTP_REQUEST:
                         addCurrentLocationData(jsonObject);
                         fetchAllData(mLocationSharedPreferences.getAllLocations());
-                        requestCount--;
-                        if (requestCount <= 1) {
-                            mLoadingBoxCardView.setVisibility(View.GONE);
-                        }
                         break;
-                    case WEATHER_HTTP_REQUEST_BY_ID:
+                    case WEATHER_BY_ID_HTTP_REQUEST:
                         addFavouriteCityWeather(jsonObject);
-                        requestCount--;
-                        if (requestCount <= 1) {
-                            mLoadingBoxCardView.setVisibility(View.GONE);
-                        }
                         break;
                 }
             }
@@ -275,11 +260,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRequestFailure(VolleyError volleyError, String requestType) {
                 switch (requestType) {
-                    case WEATHER_HTTP_REQUEST_BY_ID:
-                        requestCount--;
-                        if (requestCount <= 1) {
-                            mLoadingBoxCardView.setVisibility(View.GONE);
-                        }
+                    case WEATHER_BY_ID_HTTP_REQUEST:
                         break;
                 }
                 Toast.makeText(MainActivity.this, volleyError.toString(), Toast.LENGTH_SHORT).show();

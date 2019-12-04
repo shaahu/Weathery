@@ -1,11 +1,11 @@
-package com.shahu.weathery.model;
+package com.shahu.weathery.model.common;
 
 import java.util.List;
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
 
 @Generated("com.robohorse.robopojogenerator")
-public class OpenWeatherMainResponse{
+public class MainResponse {
 
 	@SerializedName("visibility")
 	private int visibility;
@@ -153,7 +153,7 @@ public class OpenWeatherMainResponse{
 	@Override
  	public String toString(){
 		return 
-			"OpenWeatherMainResponse{" + 
+			"MainResponse{" +
 			"visibility = '" + visibility + '\'' + 
 			",timezone = '" + timezone + '\'' + 
 			",main = '" + main + '\'' + 

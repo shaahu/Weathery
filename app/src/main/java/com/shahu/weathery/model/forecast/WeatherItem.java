@@ -1,4 +1,4 @@
-package com.shahu.weathery.model;
+package com.shahu.weathery.model.forecast;
 
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;

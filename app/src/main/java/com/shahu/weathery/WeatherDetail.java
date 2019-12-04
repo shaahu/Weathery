@@ -3,28 +3,28 @@ package com.shahu.weathery;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.shahu.weathery.common.VolleyRequest;
+import com.shahu.weathery.customui.CitynameTextView;
 import com.shahu.weathery.interface2.IVolleyResponse;
-import com.shahu.weathery.model.OpenWeatherMainResponse;
+import com.shahu.weathery.model.forecast.ForecastResponse;
 
-import static com.shahu.weathery.common.Constants.WEATHER_HTTP_REQUEST_BY_ID;
+import static com.shahu.weathery.common.Constants.WEATHER_BY_ID_HTTP_REQUEST;
+import static com.shahu.weathery.common.Constants.WEATHER_FORECAST_BY_ID_HTTP_REQUEST;
 
 
 public class WeatherDetail extends AppCompatActivity {
 
     private static final String TAG = "WeatherDetail";
     private static String mCityId;
-    private CardView mLoadingBoxCardView;
     private VolleyRequest mVolleyRequest;
     private IVolleyResponse mIVolleyResponseCallback = null;
+    private CitynameTextView mCitynameTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +40,7 @@ public class WeatherDetail extends AppCompatActivity {
             @Override
             public void onSuccessResponse(JsonObject jsonObject, String requestType) {
                 switch (requestType) {
-                    case WEATHER_HTTP_REQUEST_BY_ID:
+                    case WEATHER_FORECAST_BY_ID_HTTP_REQUEST:
                         weatherReqComplete(jsonObject);
                 }
             }
@@ -55,23 +55,18 @@ public class WeatherDetail extends AppCompatActivity {
     }
 
     private void viewsInitialization() {
-        mLoadingBoxCardView = findViewById(R.id.cv_loading);
+        mCitynameTextView = findViewById(R.id.forecast_city);
     }
 
     private void fetchCityWeatherData() {
         mCityId = getIntent().getStringExtra("id");
         Log.d(TAG, "fetchCityWeatherData: " + mCityId);
-        mLoadingBoxCardView.setVisibility(View.VISIBLE);
-        mVolleyRequest.getWeatherByCityId(mCityId, WEATHER_HTTP_REQUEST_BY_ID);
+        mVolleyRequest.getWeatherForecastByCityId(mCityId, WEATHER_FORECAST_BY_ID_HTTP_REQUEST);
     }
 
     private void weatherReqComplete(JsonObject jsonObject) {
         Gson gson = new Gson();
-        OpenWeatherMainResponse openWeatherMainResponse = gson.fromJson(jsonObject.toString(), OpenWeatherMainResponse.class);
-        allRequestCompletes();
-    }
-
-    private void allRequestCompletes() {
-        mLoadingBoxCardView.setVisibility(View.GONE);
+        ForecastResponse forecastResponse = gson.fromJson(jsonObject.toString(), ForecastResponse.class);
+        mCitynameTextView.setText(forecastResponse.getCity().getName());
     }
 }

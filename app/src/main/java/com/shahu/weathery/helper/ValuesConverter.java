@@ -2,7 +2,7 @@ package com.shahu.weathery.helper;
 
 import android.annotation.SuppressLint;
 
-import com.shahu.weathery.model.OpenWeatherMainResponse;
+import com.shahu.weathery.model.common.MainResponse;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -36,11 +36,11 @@ public class ValuesConverter {
         return dateTime;
     }
 
-    public static String getDayNight(OpenWeatherMainResponse openWeatherMainResponse) {
-        int secShift = openWeatherMainResponse.getTimezone();
-        int sunrise = convertUnixTime(openWeatherMainResponse.getSys().getSunrise(), secShift).getHourOfDay();
-        int sunset = convertUnixTime(openWeatherMainResponse.getSys().getSunset(), secShift).getHourOfDay();
-        int current = convertUnixTime(openWeatherMainResponse.getDt(), secShift).getHourOfDay();
+    public static String getDayNight(MainResponse mainResponse) {
+        int secShift = mainResponse.getTimezone();
+        int sunrise = convertUnixTime(mainResponse.getSys().getSunrise(), secShift).getHourOfDay();
+        int sunset = convertUnixTime(mainResponse.getSys().getSunset(), secShift).getHourOfDay();
+        int current = convertUnixTime(mainResponse.getDt(), secShift).getHourOfDay();
         if (current > sunrise && current < sunset)
             return DAY;
         return NIGHT;
@@ -63,7 +63,7 @@ public class ValuesConverter {
     public static String getTimeForCity(long time, int secondsShift) {
         String newTime = null;
         DateTime dateTime = convertUnixTime(time,secondsShift);
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("EEEE, HH:mm");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("E, HH:mm");
         newTime =  dateTimeFormatter.print(dateTime);
         return newTime;
     }

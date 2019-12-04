@@ -3,6 +3,8 @@ package com.shahu.weathery.model;
 
 import androidx.annotation.NonNull;
 
+import com.shahu.weathery.model.common.WeatherItem;
+
 /**
  * Created by Shahu Ronghe on 20, September, 2019
  * in Weathery

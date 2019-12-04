@@ -1,29 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".WeatherDetail">
 
-
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cv_loading"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_centerInParent="true"
-        android:visibility="gone">
-
-        <com.shahu.weathery.customui.LoadingBox
-            android:id="@+id/loading_box"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:loaderColor="@color/grey_500"
-            app:speed="25"
-            app:strokeColor="@color/black"
-            app:strokeWidth="5" />
-
-    </androidx.cardview.widget.CardView>
+    <com.shahu.weathery.customui.CitynameTextView
+        android:id="@+id/forecast_city"
+        android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true"
+        android:textAllCaps="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>

@@ -18,6 +18,7 @@ import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.shahu.weathery.R;
+import com.shahu.weathery.customui.CitynameTextView;
 import com.shahu.weathery.helper.ImageHelper;
 import com.shahu.weathery.helper.ValuesConverter;
 import com.shahu.weathery.interface2.IRecyclerViewListener;
@@ -102,7 +103,7 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public String cityId;
         RelativeLayout mainRelativeLayout;
-        TextView cardName;
+        CitynameTextView cardName;
         TextView cardTemperature;
         TextView cardDescription;
         ImageView cardImage;
