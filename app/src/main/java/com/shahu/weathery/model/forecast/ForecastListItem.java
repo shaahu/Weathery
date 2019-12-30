@@ -3,12 +3,13 @@ package com.shahu.weathery.model.forecast;
 import java.util.List;
 import javax.annotation.Generated;
 import com.google.gson.annotations.SerializedName;
+import com.shahu.weathery.model.common.WeatherItem;
 
 @Generated("com.robohorse.robopojogenerator")
 public class ForecastListItem {
 
 	@SerializedName("dt")
-	private int dt;
+	private long dt;
 
 	@SerializedName("dt_txt")
 	private String dtTxt;
@@ -31,11 +32,11 @@ public class ForecastListItem {
 	@SerializedName("rain")
 	private Rain rain;
 
-	public void setDt(int dt){
+	public void setDt(long dt){
 		this.dt = dt;
 	}
 
-	public int getDt(){
+	public long getDt(){
 		return dt;
 	}
 

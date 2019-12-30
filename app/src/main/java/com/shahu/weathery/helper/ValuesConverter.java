@@ -61,10 +61,20 @@ public class ValuesConverter {
     }
 
     public static String getTimeForCity(long time, int secondsShift) {
-        String newTime = null;
-        DateTime dateTime = convertUnixTime(time,secondsShift);
+        DateTime dateTime = convertUnixTime(time, secondsShift);
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("E, HH:mm");
-        newTime =  dateTimeFormatter.print(dateTime);
-        return newTime;
+        return dateTimeFormatter.print(dateTime);
+    }
+
+    public static String getDateForCity(long currentTime, int timezone) {
+        DateTime dateTime = convertUnixTime(currentTime, timezone);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("EEEE, dd MMM");
+        return dateTimeFormatter.print(dateTime);
+    }
+
+    public static String getTimeOnlyForCity(long currentTime, int timezone) {
+        DateTime dateTime = convertUnixTime(currentTime, timezone);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("HH:mm");
+        return dateTimeFormatter.print(dateTime);
     }
 }

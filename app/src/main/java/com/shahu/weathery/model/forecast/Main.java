@@ -7,16 +7,16 @@ import com.google.gson.annotations.SerializedName;
 public class Main{
 
 	@SerializedName("temp")
-	private double temp;
+	private String temp;
 
 	@SerializedName("temp_min")
 	private double tempMin;
 
 	@SerializedName("grnd_level")
-	private int grndLevel;
+	private double grndLevel;
 
 	@SerializedName("temp_kf")
-	private int tempKf;
+	private double tempKf;
 
 	@SerializedName("humidity")
 	private int humidity;
@@ -25,16 +25,27 @@ public class Main{
 	private int pressure;
 
 	@SerializedName("sea_level")
-	private int seaLevel;
+	private double seaLevel;
 
 	@SerializedName("temp_max")
 	private double tempMax;
 
-	public void setTemp(double temp){
+	@SerializedName("feels_like")
+	private double feelsLike;
+
+	public double getFeelsLike() {
+		return feelsLike;
+	}
+
+	public void setFeelsLike(double feelsLike) {
+		this.feelsLike = feelsLike;
+	}
+
+	public void setTemp(String temp){
 		this.temp = temp;
 	}
 
-	public double getTemp(){
+	public String getTemp(){
 		return temp;
 	}
 
@@ -46,19 +57,19 @@ public class Main{
 		return tempMin;
 	}
 
-	public void setGrndLevel(int grndLevel){
+	public void setGrndLevel(double grndLevel){
 		this.grndLevel = grndLevel;
 	}
 
-	public int getGrndLevel(){
+	public double getGrndLevel(){
 		return grndLevel;
 	}
 
-	public void setTempKf(int tempKf){
+	public void setTempKf(double tempKf){
 		this.tempKf = tempKf;
 	}
 
-	public int getTempKf(){
+	public double getTempKf(){
 		return tempKf;
 	}
 
@@ -78,11 +89,11 @@ public class Main{
 		return pressure;
 	}
 
-	public void setSeaLevel(int seaLevel){
+	public void setSeaLevel(double seaLevel){
 		this.seaLevel = seaLevel;
 	}
 
-	public int getSeaLevel(){
+	public double getSeaLevel(){
 		return seaLevel;
 	}
 

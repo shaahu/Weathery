@@ -25,6 +25,7 @@ import com.shahu.weathery.common.CheckPermissions;
 import com.shahu.weathery.common.LocationSharedPreferences;
 import com.shahu.weathery.common.VolleyRequest;
 import com.shahu.weathery.customui.CustomSearchDialog;
+import com.shahu.weathery.customui.TextHolderSubstanceCaps;
 import com.shahu.weathery.helper.DatabaseHandler;
 import com.shahu.weathery.helper.Locator;
 import com.shahu.weathery.helper.RecyclerViewItemHelper;
@@ -56,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
     private CheckPermissions mCheckPermissions;
     private LocationSharedPreferences mLocationSharedPreferences;
-    private TextView mDate, mTime, mCityName;
+    private TextHolderSubstanceCaps mDate, mTime;
+    private TextView mCityName;
     private RecyclerView mRecyclerViewLocations;
     private ImageView mAddNewButton;
     private ArrayList<CardModel> mCardModelArrayList;
@@ -293,8 +295,8 @@ public class MainActivity extends AppCompatActivity {
     private void initRecyclerView() {
         IRecyclerViewListener recyclerViewListener = new IRecyclerViewListener() {
             @Override
-            public void onSingleShortClickListener(String cityId) {
-                openDetailedView(cityId);
+            public void onSingleShortClickListener(String cityId, long time, String dayNight, String temperature, String description) {
+                openDetailedView(cityId, time, dayNight, temperature, description);
             }
         };
         mLocationRecyclerViewAdapter = new LocationRecyclerViewAdapter(mCardModelArrayList, this, recyclerViewListener);
@@ -334,11 +336,19 @@ public class MainActivity extends AppCompatActivity {
     /**
      * gets called when click on list item to show detailed view.
      *
-     * @param cityId city identifier
+     * @param cityId      city identifier
+     * @param time
+     * @param dayNight
+     * @param temperature
+     * @param description
      */
-    private void openDetailedView(String cityId) {
+    private void openDetailedView(String cityId, long time, String dayNight, String temperature, String description) {
         Intent intent = new Intent(this, WeatherDetail.class);
         intent.putExtra("id", cityId);
+        intent.putExtra("time", time);
+        intent.putExtra("day", dayNight);
+        intent.putExtra("temperature", temperature);
+        intent.putExtra("desc", description);
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }

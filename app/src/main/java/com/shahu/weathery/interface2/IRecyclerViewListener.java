@@ -6,5 +6,5 @@ package com.shahu.weathery.interface2;
  */
 public interface IRecyclerViewListener {
 
-    void onSingleShortClickListener(String cityId);
+    void onSingleShortClickListener(String cityId, long time, String dayNight, String temperature, String description);
 }

@@ -125,7 +125,11 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
         @Override
         public void onClick(View v) {
             if (mIRecyclerViewListener != null)
-                mIRecyclerViewListener.onSingleShortClickListener(mCardModelArrayList.get(getLayoutPosition()).getCityId());
+                mIRecyclerViewListener.onSingleShortClickListener(mCardModelArrayList.get(getLayoutPosition()).getCityId(),
+                        mCardModelArrayList.get(getLayoutPosition()).getTime(),
+                        mCardModelArrayList.get(getLayoutPosition()).getDayNight(),
+                        mCardModelArrayList.get(getLayoutPosition()).getTemperature(),
+                        mCardModelArrayList.get(getLayoutPosition()).getDescription());
         }
     }
 

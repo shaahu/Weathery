@@ -3,14 +3,161 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingHorizontal="20dp"
     tools:context=".WeatherDetail">
+
+    <RelativeLayout
+        android:id="@+id/date_time_RL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
+
+        <com.shahu.weathery.customui.TextHolderSubstanceCaps
+            android:id="@+id/main_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/substance_light"
+            android:textAlignment="center" />
+
+        <com.shahu.weathery.customui.TextHolderSubstanceCaps
+            android:id="@+id/main_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/main_date"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:fontFamily="@font/substance_light"
+            android:textAlignment="center" />
+
+    </RelativeLayout>
 
     <com.shahu.weathery.customui.CitynameTextView
         android:id="@+id/forecast_city"
-        android:layout_marginTop="15dp"
-        android:layout_centerHorizontal="true"
-        android:textAllCaps="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_below="@id/date_time_RL"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:letterSpacing="0.1"
+        android:textAllCaps="true"
+        android:textSize="32dp" />
+
+
+    <RelativeLayout
+        android:id="@+id/detail_ll1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/forecast_city"
+        android:layout_centerInParent="true">
+
+        <ImageView
+            android:id="@+id/detail_main_image"
+            android:layout_width="150dp"
+            android:layout_height="120dp"
+            android:layout_centerVertical="true" />
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_marginTop="25dp"
+            android:layout_below="@id/detail_main_image"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="@font/montserrat_regular"
+            android:letterSpacing="0.3"
+            android:textAllCaps="true"
+            android:textAlignment="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/detail_main_temperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@id/detail_main_image"
+            android:fontFamily="@font/lato_thin"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textAlignment="center"
+            android:textSize="60sp" />
+
+        <TextView
+            android:id="@+id/feels_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/detail_main_temperature"
+            android:layout_marginTop="35dp"
+            android:layout_marginStart="25dp"
+            android:layout_toEndOf="@id/detail_main_image"
+            android:fontFamily="@font/alpha5"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/main_summary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/detail_ll1"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp">
+
+            <com.shahu.weathery.customui.TextHolderSubstanceCaps
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="@string/pressure" />
+
+            <com.shahu.weathery.customui.TextHolderSubstanceCaps
+                android:id="@+id/pressure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp">
+
+            <com.shahu.weathery.customui.TextHolderSubstanceCaps
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="@string/cloudiness" />
+
+            <com.shahu.weathery.customui.TextHolderSubstanceCaps
+                android:id="@+id/sea_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp">
+
+            <com.shahu.weathery.customui.TextHolderSubstanceCaps
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="@string/humidity" />
+
+            <com.shahu.weathery.customui.TextHolderSubstanceCaps
+                android:id="@+id/humidity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true" />
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

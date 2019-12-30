@@ -15,5 +15,9 @@
     <string name="remove_location">Remove Location</string>
     <string name="move_up">Move Up</string>
     <string name="move_down">Move Down</string>
+    <string name="pressure">pressure</string>
+    <string name="sea_level">sea Level</string>
+    <string name="humidity">humidity</string>
+    <string name="cloudiness">Cloudiness</string>
 
 </resources>
