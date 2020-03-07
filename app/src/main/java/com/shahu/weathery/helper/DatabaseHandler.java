@@ -3,6 +3,7 @@ package com.shahu.weathery.helper;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.shahu.weathery.model.CitySearchItem;
 
@@ -34,17 +35,23 @@ public class DatabaseHandler {
 
     private void loadAllCities() {
         SQLiteDatabase database = mAssetDatabaseOpenHelper.openDatabase();
-        Cursor cursor = database.query(TABLE_NAME, new String[]{COLUMN_ID, COLUMN_CITY_NAME, COLUMN_COUNTRY}, null, null, null, null, null);
-        if (cursor.moveToFirst()) {
-            while (!cursor.isAfterLast()) {
-                allCities.add(
-                        new CitySearchItem(
-                                cursor.getInt(cursor.getColumnIndex(COLUMN_ID)),
-                                cursor.getString(cursor.getColumnIndex(COLUMN_CITY_NAME)),
-                                cursor.getString(cursor.getColumnIndex(COLUMN_COUNTRY))));
-                cursor.moveToNext();
+        Log.d(TAG, "loadAllCities: "+database.isOpen());
+        try {
+            Cursor cursor = database.query(TABLE_NAME, new String[]{COLUMN_ID, COLUMN_CITY_NAME, COLUMN_COUNTRY}, null, null, null, null, null);
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    allCities.add(
+                            new CitySearchItem(
+                                    cursor.getInt(cursor.getColumnIndex(COLUMN_ID)),
+                                    cursor.getString(cursor.getColumnIndex(COLUMN_CITY_NAME)),
+                                    cursor.getString(cursor.getColumnIndex(COLUMN_COUNTRY))));
+                    cursor.moveToNext();
+                }
+                cursor.close();
             }
-            cursor.close();
+        }catch (Exception e){
+            Log.e(TAG, "loadAllCities: ",e );
+            loadAllCities();
         }
     }
 }
