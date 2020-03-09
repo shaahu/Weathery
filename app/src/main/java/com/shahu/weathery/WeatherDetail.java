@@ -22,6 +22,8 @@ import com.shahu.weathery.interface2.IVolleyResponse;
 import com.shahu.weathery.model.CardModel;
 import com.shahu.weathery.model.forecast.ForecastResponse;
 
+import org.json.JSONArray;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -65,6 +67,11 @@ public class WeatherDetail extends AppCompatActivity {
             @Override
             public void onRequestFailure(VolleyError volleyError, String requestType) {
                 Log.d(TAG, "onRequestFailure: " + volleyError.getMessage());
+            }
+
+            @Override
+            public void onSuccessJsonArrayResponse(JSONArray jsonObject, String requestType) {
+
             }
         };
         mVolleyRequest = new VolleyRequest(this, mIVolleyResponseCallback);

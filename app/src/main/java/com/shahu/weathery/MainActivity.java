@@ -26,7 +26,6 @@ import com.shahu.weathery.common.LocationSharedPreferences;
 import com.shahu.weathery.common.VolleyRequest;
 import com.shahu.weathery.customui.CustomSearchDialog;
 import com.shahu.weathery.customui.TextHolderSubstanceCaps;
-import com.shahu.weathery.helper.DatabaseHandler;
 import com.shahu.weathery.helper.Locator;
 import com.shahu.weathery.helper.RecyclerViewItemHelper;
 import com.shahu.weathery.helper.ValuesConverter;
@@ -41,6 +40,8 @@ import com.shahu.weathery.model.common.MainResponse;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import org.json.JSONArray;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,6 +50,7 @@ import java.util.Comparator;
 import java.util.Locale;
 import java.util.Map;
 
+import static com.shahu.weathery.common.Constants.CITIES_DATA_FOR_SEARCH_LIST;
 import static com.shahu.weathery.common.Constants.CURRENT_LOCATION_HTTP_REQUEST;
 import static com.shahu.weathery.common.Constants.WEATHER_BY_ID_HTTP_REQUEST;
 
@@ -62,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerViewLocations;
     private ImageView mAddNewButton;
     private ArrayList<CardModel> mCardModelArrayList;
-    private DatabaseHandler mDatabaseHandler;
     private VolleyRequest mVolleyRequest;
     private IVolleyResponse mIVolleyResponseCallback = null;
     private LocationRecyclerViewAdapter mLocationRecyclerViewAdapter;
@@ -86,11 +87,12 @@ public class MainActivity extends AppCompatActivity {
         mCityName = findViewById(R.id.main_city_name);
         initSharedPref();
         initVolleyCallback();
-        initDatabase();
         mVolleyRequest = new VolleyRequest(this, mIVolleyResponseCallback);
         mCheckPermissions.checkApplicationPermissions();
         mRecyclerViewLocations = findViewById(R.id.locations);
         mAddNewButton = findViewById(R.id.add_new_loc_btn);
+
+        mAddNewButton.setVisibility(View.VISIBLE);
         mAddNewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,12 +108,11 @@ public class MainActivity extends AppCompatActivity {
      * Search engine from cursor.
      */
     private void searchForNewLocation() {
-        CustomSearchDialog customSearchDialog = new CustomSearchDialog(this, mDatabaseHandler.getAllCities());
+        CustomSearchDialog customSearchDialog = new CustomSearchDialog(this,this, new ArrayList<CitySearchItem>());
         customSearchDialog.show();
         customSearchDialog.setOnItemSelected(new OnSearchItemSelection() {
             @Override
-            public void onClick(int position, CitySearchItem citySearchItem) {
-                String cityId = String.valueOf(citySearchItem.getId());
+            public void onClick(String cityId) {
                 if (mLocationSharedPreferences.addNewLocation(cityId))
                     mVolleyRequest.getWeatherByCityId(cityId, WEATHER_BY_ID_HTTP_REQUEST);
                 else
@@ -256,6 +257,11 @@ public class MainActivity extends AppCompatActivity {
                     case WEATHER_BY_ID_HTTP_REQUEST:
                         addFavouriteCityWeather(jsonObject);
                         break;
+
+                    case "citiesData":
+                        Log.d(TAG, "onSuccessResponse: "+jsonObject);
+                        break;
+
                 }
             }
 
@@ -267,26 +273,16 @@ public class MainActivity extends AppCompatActivity {
                 }
                 Toast.makeText(MainActivity.this, volleyError.toString(), Toast.LENGTH_SHORT).show();
             }
-        };
-    }
 
-    /**
-     * Method to initialize cities list from db with id.
-     */
-    private void initDatabase() {
-        new Thread() {
             @Override
-            public void run() {
-                mDatabaseHandler = new DatabaseHandler(MainActivity.this);
-                mAddNewButton.setClickable(true);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mAddNewButton.setVisibility(View.VISIBLE);
-                    }
-                });
+            public void onSuccessJsonArrayResponse(JSONArray jsonObject, String requestType) {
+                switch (requestType){
+                    case CITIES_DATA_FOR_SEARCH_LIST:
+                        Log.d(TAG, "onSuccessJsonArrayResponse: "+jsonObject.toString());
+                        break;
+                }
             }
-        }.start();
+        };
     }
 
     /**

@@ -22,6 +22,7 @@ public final class Constants {
     public final static String CURRENT_LOCATION_HTTP_REQUEST = "currentLocationWeatherRequest";
     public final static String WEATHER_BY_ID_HTTP_REQUEST = "weatherByCityId";
     public final static String WEATHER_FORECAST_BY_ID_HTTP_REQUEST = "weatherForecastByCityId";
+    public final static String CITIES_DATA_FOR_SEARCH_LIST = "citiesData";
 
     //WeatherIcons
     private static final String WEATHER_ICONS_ASSET_PATH = "w_icons/";

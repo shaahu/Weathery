@@ -58,7 +58,10 @@ public class SearchDialogListAdapter extends ArrayAdapter {
         TextView city = relativeLayout.findViewById(R.id.city);
         TextView country = relativeLayout.findViewById(R.id.country);
         city.setText(searchListItems.get(i).getCityName());
-        country.setText(ValuesConverter.getCountryImage(searchListItems.get(i).getCountryCode()));
+        city.setTag(searchListItems.get(i).getId());
+        final String countryCode = searchListItems.get(i).getCountryCode();
+        if (!countryCode.equals("XX"))
+            country.setText(ValuesConverter.getCountryImage(countryCode));
         return inflateview;
     }
 
