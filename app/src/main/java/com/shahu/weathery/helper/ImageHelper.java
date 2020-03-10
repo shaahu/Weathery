@@ -31,9 +31,9 @@ public class ImageHelper {
 
     public static Drawable getDescriptionImageDrawable(CardModel cardModel, Context context) throws IOException {
         mContext = context;
-        final String main = cardModel.getWeatherItem().getMain();
-        final String desc = cardModel.getWeatherItem().getDescription();
-        mTime = cardModel.getDayNight();
+        final String main = ObjectExtractor.extractMain(cardModel);
+        final String desc = ObjectExtractor.extractDescription(cardModel);
+        mTime = ObjectExtractor.extractTime(cardModel);
         switch (main) {
             case FILE_NOT_FOUND_EXP:
                 return buildImagePath("default_weather_icon");
