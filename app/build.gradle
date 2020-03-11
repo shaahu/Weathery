@@ -6,8 +6,8 @@ android {
         applicationId "com.shahu.weathery"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 5
-        versionName "1.1"
+        versionCode 6
+        versionName "1.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -32,8 +32,10 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.android.volley:volley:1.1.1'
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation group: 'javax.annotation', name: 'javax.annotation-api', version: '1.2'
+    implementation group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
     implementation "androidx.cardview:cardview:1.0.0"
     implementation 'androidx.palette:palette:1.0.0'
     implementation 'net.danlew:android.joda:2.10.3'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+
 }

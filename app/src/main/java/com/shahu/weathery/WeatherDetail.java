@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
@@ -42,6 +43,7 @@ public class WeatherDetail extends AppCompatActivity {
     private TextView mDetailMainTemperatureTextView;
     private ImageView mDetailMainImageView;
     private TextView mFeelsLikeTextView, mDescriptionTextView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,18 @@ public class WeatherDetail extends AppCompatActivity {
         volleyInitialization();
         viewsInitialization();
         fetchCityWeatherData();
+        initSwipeRelativeRefreshLayout();
+    }
+
+    private void initSwipeRelativeRefreshLayout() {
+        mSwipeRefreshLayout = findViewById(R.id.pullToRefreshDetailed);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchCityWeatherData();
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
     }
 
     private void volleyInitialization() {
@@ -109,7 +123,7 @@ public class WeatherDetail extends AppCompatActivity {
         cardModel.setWeatherItem(forecastResponse.getList().get(0).getWeather().get(0));
         cardModel.setDayNight(mDayNight);
         String iconUrl = ImageHelper.getDescriptionImageDrawable(cardModel);
-        Log.d(TAG, "weatherReqComplete: image URL: "+iconUrl);
+        Log.d(TAG, "weatherReqComplete: image URL: " + iconUrl);
         Glide.with(this).load(iconUrl).into(mDetailMainImageView);
         mDetailMainTemperatureTextView.setText(ValuesConverter.convertTemperatureToCelsius(mTemperature) + "\u00B0C");
         mFeelsLikeTextView.setText("feels like " + ValuesConverter.convertTemperatureToCelsius(String.valueOf(forecastResponse.getList().get(0).getMain().getFeelsLike())) + "\u00B0C");
@@ -117,6 +131,13 @@ public class WeatherDetail extends AppCompatActivity {
         mHumidityTextView.setText(forecastResponse.getList().get(0).getMain().getHumidity() + " %");
         mCloudinessTextView.setText(forecastResponse.getList().get(0).getClouds().getAll() + " %");
         mDescriptionTextView.setText(mDescription);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(false);
+
+            }
+        }, 800);
     }
 
     private void inflateClock() {

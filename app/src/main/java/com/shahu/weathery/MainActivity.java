@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
@@ -47,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private VolleyRequest mVolleyRequest;
     private IVolleyResponse mIVolleyResponseCallback = null;
     private LocationRecyclerViewAdapter mLocationRecyclerViewAdapter;
+    private SwipeRefreshLayout pullToRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,13 +105,25 @@ public class MainActivity extends AppCompatActivity {
         setCurrentCoordinates();
         mCardModelArrayList = new ArrayList<>();
         initRecyclerView();
+        initPullToRefresh();
+    }
+
+    private void initPullToRefresh() {
+        pullToRefreshLayout = findViewById(R.id.pullToRefresh);
+        pullToRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                setCurrentCoordinates();
+                pullToRefreshLayout.setRefreshing(true);
+            }
+        });
     }
 
     /**
      * Search engine from cursor.
      */
     private void searchForNewLocation() {
-        CustomSearchDialog customSearchDialog = new CustomSearchDialog(this,this, new ArrayList<CitySearchItem>());
+        CustomSearchDialog customSearchDialog = new CustomSearchDialog(this, this, new ArrayList<CitySearchItem>());
         customSearchDialog.show();
         customSearchDialog.setOnItemSelected(new OnSearchItemSelection() {
             @Override
@@ -144,6 +159,11 @@ public class MainActivity extends AppCompatActivity {
         cardModel.setDescription(mainResponse.getWeather().get(0).getDescription().toUpperCase());
         cardModel.setCityId(String.valueOf(mainResponse.getId()));
         cardModel.setDayNight(ValuesConverter.getDayNight(mainResponse));
+        for(Iterator<CardModel> iterator = mCardModelArrayList.iterator();iterator.hasNext();){
+            if (iterator.next().getCityId().equals(cardModel.getCityId())){
+                iterator.remove();
+            }
+        }
         mCardModelArrayList.add(cardModel);
         Collections.sort(mCardModelArrayList, new Comparator<CardModel>() {
             @Override
@@ -153,7 +173,8 @@ public class MainActivity extends AppCompatActivity {
         });
         mLocationRecyclerViewAdapter.notifyDataSetChanged();
     }
-
+    private String CURRENTLOCATIONCITYID = null;
+    private String CURRENTLOCATIONDEFAULTCITYID = "001";
     /**
      * Method to add current location plus city name to header.
      *
@@ -166,11 +187,15 @@ public class MainActivity extends AppCompatActivity {
         cardModel.setName("Current Location");
         cardModel.setCountryCode(mainResponse.getSys().getCountry());
         cardModel.setPosition(0);
-        cardModel.setCityId(String.valueOf(mainResponse.getId()));
+        cardModel.setCityId(CURRENTLOCATIONDEFAULTCITYID);
+        CURRENTLOCATIONCITYID = String.valueOf(mainResponse.getId());
         cardModel.setTemperature(String.valueOf(mainResponse.getMain().getTemp()));
         cardModel.setWeatherItem(mainResponse.getWeather().get(0));
         cardModel.setDayNight(ValuesConverter.getDayNight(mainResponse));
         cardModel.setDescription(mainResponse.getWeather().get(0).getDescription().toUpperCase());
+        if (mCardModelArrayList.size()!=0&&mCardModelArrayList.get(cardModel.getPosition()) != null && mCardModelArrayList.get(cardModel.getPosition()).getPosition() == cardModel.getPosition()) {
+            mCardModelArrayList.remove(mCardModelArrayList.get(cardModel.getPosition()));
+        }
         mCardModelArrayList.add(cardModel);
         mLocationRecyclerViewAdapter.notifyDataSetChanged();
         mCityName.setText(String.format("%s, %s", mainResponse.getName(), mainResponse.getSys().getCountry()));
@@ -187,6 +212,12 @@ public class MainActivity extends AppCompatActivity {
         for (Map.Entry<String, ?> entry : allLocations.entrySet()) {
             mVolleyRequest.getWeatherByCityId(entry.getValue().toString(), WEATHER_BY_ID_HTTP_REQUEST);
         }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                pullToRefreshLayout.setRefreshing(false);
+            }
+        }, 2000);
     }
 
     @Override
@@ -258,11 +289,6 @@ public class MainActivity extends AppCompatActivity {
                     case WEATHER_BY_ID_HTTP_REQUEST:
                         addFavouriteCityWeather(jsonObject);
                         break;
-
-                    case "citiesData":
-                        Log.d(TAG, "onSuccessResponse: "+jsonObject);
-                        break;
-
                 }
             }
 
@@ -277,9 +303,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSuccessJsonArrayResponse(JSONArray jsonObject, String requestType) {
-                switch (requestType){
+                switch (requestType) {
                     case CITIES_DATA_FOR_SEARCH_LIST:
-                        Log.d(TAG, "onSuccessJsonArrayResponse: "+jsonObject.toString());
+                        Log.d(TAG, "onSuccessJsonArrayResponse: " + jsonObject.toString());
                         break;
                 }
             }
@@ -341,6 +367,9 @@ public class MainActivity extends AppCompatActivity {
      */
     private void openDetailedView(String cityId, long time, String dayNight, String temperature, String description) {
         Intent intent = new Intent(this, WeatherDetail.class);
+        if (cityId.equals(CURRENTLOCATIONDEFAULTCITYID)){
+            cityId = CURRENTLOCATIONCITYID;
+        }
         intent.putExtra("id", cityId);
         intent.putExtra("time", time);
         intent.putExtra("day", dayNight);

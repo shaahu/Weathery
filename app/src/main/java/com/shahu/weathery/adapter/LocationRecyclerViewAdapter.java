@@ -90,6 +90,10 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
         return mCardModelArrayList.size();
     }
 
+    public void clear() {
+        mCardModelArrayList.clear();
+    }
+
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public String cityId;
