@@ -1,13 +1,9 @@
 package com.shahu.weathery.helper;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
-
 import com.shahu.weathery.model.CardModel;
 
-import java.io.IOException;
-import java.io.InputStream;
-
+import static com.shahu.weathery.common.Constants.ADKRAFT_BASE_URL;
+import static com.shahu.weathery.common.Constants.ADKRAFT_WEATHER_IMAGES;
 import static com.shahu.weathery.common.Constants.DAY;
 import static com.shahu.weathery.common.Constants.NIGHT;
 import static com.shahu.weathery.common.Constants.WEATHER_ICONS_DAY;
@@ -26,11 +22,9 @@ public class ImageHelper {
     private static final String CLEAR_MAIN = "Clear";
     private static final String CLOUDS_MAIN = "Clouds";
     private static final String FILE_NOT_FOUND_EXP = "na";
-    private static Context mContext;
     private static String mTime;
 
-    public static Drawable getDescriptionImageDrawable(CardModel cardModel, Context context) throws IOException {
-        mContext = context;
+    public static String getDescriptionImageDrawable(CardModel cardModel) {
         final String main = ObjectExtractor.extractMain(cardModel);
         final String desc = ObjectExtractor.extractDescription(cardModel);
         mTime = ObjectExtractor.extractTime(cardModel);
@@ -55,7 +49,7 @@ public class ImageHelper {
 
     }
 
-    private static Drawable getAtmosphereDescription(String main) throws IOException {
+    private static String getAtmosphereDescription(String main) {
         final String MIST = "Mist";
         final String SMOKE = "Smoke";
         final String HAZE = "Haze";
@@ -81,7 +75,7 @@ public class ImageHelper {
         return buildImagePath("default_weather_icon");
     }
 
-    private static Drawable getRainDescription(String desc) throws IOException {
+    private static String getRainDescription(String desc) {
         final String LIGHT_RAIN = "light rain";
         final String LIGHT_INTENSITY_SHOWER_RAIN = "light intensity shower rain\t";
         switch (desc) {
@@ -93,11 +87,11 @@ public class ImageHelper {
         return buildImagePath("freezing_rain");
     }
 
-    private static Drawable getDrizzleDescription() throws IOException {
+    private static String getDrizzleDescription() {
         return buildImagePath("drizzle");
     }
 
-    private static Drawable getThunderstormDescription(String desc) throws IOException {
+    private static String getThunderstormDescription(String desc) {
         final String THUNDERSTORM_LIGHT_RAIN = "thunderstorm with light rain";
         final String THUNDERSTORM_RAIN = "thunderstorm with rain";
         final String THUNDERSTORM_HEAVY_RAIN = "thunderstorm with heavy rain";
@@ -123,7 +117,7 @@ public class ImageHelper {
         return buildImagePath("thundershowers");
     }
 
-    private static Drawable getSnowDescription(String desc) throws IOException {
+    private static String getSnowDescription(String desc) {
         final String LIGHT_SNOW = "light snow";
         final String SNOW = "Snow";
         final String HEAVY_SNOW = "Heavy snow";
@@ -159,11 +153,11 @@ public class ImageHelper {
         return buildImagePath("snow");
     }
 
-    private static Drawable getClearDescription() throws IOException {
+    private static String getClearDescription() {
         return buildImagePath("clear");
     }
 
-    private static Drawable getCloudDescription(String desc) throws IOException {
+    private static String getCloudDescription(String desc) {
         final String FEW_CLOUDS = "few clouds";
         final String SCATTERED = "scattered clouds";
         final String BROKEN = "broken clouds";
@@ -181,12 +175,12 @@ public class ImageHelper {
         return buildImagePath("cloudy");
     }
 
-    private static Drawable buildImagePath(String fileName) throws IOException {
-        InputStream ims = null;
+    private static String buildImagePath(String fileName) {
+        String path = ADKRAFT_BASE_URL + ADKRAFT_WEATHER_IMAGES + "/day/clear";
         if (mTime.equals(DAY))
-            ims = mContext.getAssets().open(WEATHER_ICONS_DAY + fileName + ".png");
+            path = ADKRAFT_BASE_URL + ADKRAFT_WEATHER_IMAGES + WEATHER_ICONS_DAY + fileName + ".png";
         if (mTime.equals(NIGHT))
-            ims = mContext.getAssets().open(WEATHER_ICONS_NIGHT + fileName + ".png");
-        return Drawable.createFromStream(ims, null);
+            path = ADKRAFT_BASE_URL + ADKRAFT_WEATHER_IMAGES + WEATHER_ICONS_NIGHT + fileName + ".png";
+        return path;
     }
 }

@@ -224,6 +224,7 @@ public class MainActivity extends AppCompatActivity {
      * Method to set current location coordinates.
      */
     private void setCurrentCoordinates() {
+        //TODO: check for image here
         Locator locationHelper = new Locator(this);
         locationHelper.getLocation(Locator.Method.NETWORK_THEN_GPS, new Locator.Listener() {
             @Override

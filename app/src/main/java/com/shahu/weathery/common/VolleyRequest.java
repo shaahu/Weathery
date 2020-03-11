@@ -17,6 +17,8 @@ import com.shahu.weathery.interface2.IVolleyResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import static com.shahu.weathery.common.Constants.ADKRAFT_BASE_URL;
+import static com.shahu.weathery.common.Constants.ADKRAFT_GET_CITIES;
 import static com.shahu.weathery.common.Constants.OPEN_WEATHER_MAP_API_KEY;
 import static com.shahu.weathery.common.Constants.OPEN_WEATHER_MAP_BASE_URL;
 import static com.shahu.weathery.common.Constants.WEATHER_BY_CITY_ID;
@@ -118,13 +120,13 @@ public class VolleyRequest {
         mRequestQueue.add(jsonObjectRequest);
     }
 
-    public void getCitiesData(final String name,final String requestType) {
-        final String url = "http://adkraftindia.com/"+"getCitiesData/"+name;
+    public void getCitiesData(final String name, final String requestType) {
+        final String url = ADKRAFT_BASE_URL + ADKRAFT_GET_CITIES + name;
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 try {
-                    mIVolleyResponse.onSuccessJsonArrayResponse(response,requestType);
+                    mIVolleyResponse.onSuccessJsonArrayResponse(response, requestType);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -132,10 +134,9 @@ public class VolleyRequest {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "onErrorResponse: "+error);
+                Log.d(TAG, "onErrorResponse: " + error);
             }
         });
-
 
 
         mRequestQueue.add(jsonObjectRequest);

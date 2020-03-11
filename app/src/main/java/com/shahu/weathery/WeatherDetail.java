@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.shahu.weathery.common.VolleyRequest;
@@ -23,9 +24,6 @@ import com.shahu.weathery.model.CardModel;
 import com.shahu.weathery.model.forecast.ForecastResponse;
 
 import org.json.JSONArray;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import static com.shahu.weathery.common.Constants.WEATHER_FORECAST_BY_ID_HTTP_REQUEST;
 
@@ -110,21 +108,9 @@ public class WeatherDetail extends AppCompatActivity {
         CardModel cardModel = new CardModel();
         cardModel.setWeatherItem(forecastResponse.getList().get(0).getWeather().get(0));
         cardModel.setDayNight(mDayNight);
-        try {
-            mDetailMainImageView.setImageDrawable(ImageHelper.getDescriptionImageDrawable(cardModel, this));
-        } catch (IOException e) {
-            if (e instanceof FileNotFoundException) {
-                CardModel cardModel1 = new CardModel();
-                cardModel1.setDescription("na");
-                try {
-                    mDetailMainImageView.setImageDrawable(ImageHelper.getDescriptionImageDrawable(cardModel1, this));
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            } else {
-                e.printStackTrace();
-            }
-        }
+        String iconUrl = ImageHelper.getDescriptionImageDrawable(cardModel);
+        Log.d(TAG, "weatherReqComplete: image URL: "+iconUrl);
+        Glide.with(this).load(iconUrl).into(mDetailMainImageView);
         mDetailMainTemperatureTextView.setText(ValuesConverter.convertTemperatureToCelsius(mTemperature) + "\u00B0C");
         mFeelsLikeTextView.setText("feels like " + ValuesConverter.convertTemperatureToCelsius(String.valueOf(forecastResponse.getList().get(0).getMain().getFeelsLike())) + "\u00B0C");
         mPressureTextView.setText(forecastResponse.getList().get(0).getMain().getPressure() + " hPa");

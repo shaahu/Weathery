@@ -5,6 +5,7 @@ package com.shahu.weathery.common;
  * in Weathery
  */
 public final class Constants {
+    //URL's
     final static String LOCATION_SHARED_PREFERENCE_NAME = "locations";
     final static String OPEN_WEATHER_MAP_API_KEY = "&APPID=fea2dca909cba74286a54e5b6e9abc6c";
     final static String OPEN_WEATHER_MAP_BASE_URL = "http://api.openweathermap.org/data/2.5/";
@@ -12,6 +13,10 @@ public final class Constants {
     final static String WEATHER_BY_COORDS_STRING = "weather?";
     final static String WEATHER_BY_CITY_ID = "weather?id=";
     final static String WEATHER_FORECAST_BY_CITY_ID = "forecast?id=";
+    //AdKraft URL's
+    public final static String ADKRAFT_BASE_URL = "http://adkraftindia.com/";
+    final static String ADKRAFT_GET_CITIES = "getCitiesData/";
+    public final static String ADKRAFT_WEATHER_IMAGES = "w_icons/";
 
     //Temperature units call
     public final static String METRIC_UNIT = "&units=metric";
@@ -25,9 +30,8 @@ public final class Constants {
     public final static String CITIES_DATA_FOR_SEARCH_LIST = "citiesData";
 
     //WeatherIcons
-    private static final String WEATHER_ICONS_ASSET_PATH = "w_icons/";
-    public static final String WEATHER_ICONS_DAY = WEATHER_ICONS_ASSET_PATH+"day/";
-    public static final String WEATHER_ICONS_NIGHT = WEATHER_ICONS_ASSET_PATH+"night/";
+    public static final String WEATHER_ICONS_DAY = "day/";
+    public static final String WEATHER_ICONS_NIGHT = "night/";
 
     //Time
     public static final String DAY = "day";
