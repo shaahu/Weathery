@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mCityName;
     private RecyclerView mRecyclerViewLocations;
     private ImageView mAddNewButton;
-    private ArrayList<CardModel> mCardModelArrayList;
+    private ArrayList<CardModel> mCardModelArrayList = new ArrayList<>();
     private VolleyRequest mVolleyRequest;
     private IVolleyResponse mIVolleyResponseCallback = null;
     private LocationRecyclerViewAdapter mLocationRecyclerViewAdapter;
@@ -159,9 +159,16 @@ public class MainActivity extends AppCompatActivity {
         if (!setCurrentCoordinates()) {
             fetchAllData(mLocationSharedPreferences.getAllLocations());
         }
-        mCardModelArrayList = new ArrayList<>();
         initRecyclerView();
         initPullToRefresh();
+        if (!mIsInternetAvailable) {
+            mCardModelArrayList.clear();
+            mLocationRecyclerViewAdapter.clear();
+            ArrayList<CardModel> cardModels = mOfflineDataSharedPreference.getOfflineData();
+            if (cardModels.size() > 0) {
+                mCardModelArrayList.addAll(cardModels);
+            }
+        }
     }
 
     private void setDisconnectStatusBar(boolean status) {
@@ -298,6 +305,45 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        if (mCardModelArrayList.size() > 0) {
+            mOfflineDataSharedPreference.storeData(mCardModelArrayList);
+        }
+        mIsInternetAvailable = mOfflineDataSharedPreference.getInternetStatus();
+        Log.d(TAG, "onPause: " + mIsInternetAvailable);
+        if (mIsInternetAvailable) {
+            modifyFeatures(true);
+        } else {
+            modifyFeatures(false);
+            mCardModelArrayList.clear();
+            mLocationRecyclerViewAdapter.clear();
+            ArrayList<CardModel> cardModels = mOfflineDataSharedPreference.getOfflineData();
+            if (cardModels.size() > 0) {
+                mCardModelArrayList.addAll(cardModels);
+            }
+        }
+        Log.d(TAG, "onPause: " + Arrays.toString(mCardModelArrayList.toArray()));
+
+        NetWatch.unregister(this);
+    }
+
+    private void modifyFeatures(boolean value) {
+        mOfflineDataSharedPreference.setInternetStatus(value);
+        pullToRefreshLayout.setEnabled(value);
+        disableAddButton(value);
+        setDisconnectStatusBar(value);
+    }
+
+    private void disableAddButton(boolean value) {
+        if (value) {
+            mAddNewButton.setVisibility(View.VISIBLE);
+        } else {
+            mAddNewButton.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         NetWatch.builder(this)
                 .setCallBack(new NetworkChangeReceiver_navigator() {
                     @Override
@@ -317,40 +363,6 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .setNotificationEnabled(false)
                 .build();
-        if (mCardModelArrayList.size() > 0) {
-            mOfflineDataSharedPreference.storeData(mCardModelArrayList);
-        }
-        mIsInternetAvailable = mOfflineDataSharedPreference.getInternetStatus();
-        Log.d(TAG, "onPause: " + mIsInternetAvailable);
-        if (mIsInternetAvailable) {
-            modifyFeatures(true);
-        } else {
-            modifyFeatures(false);
-            if (mOfflineDataSharedPreference.getOfflineData().size() > 0) {
-                //TODO: implement recycler view here.
-            }
-        }
-        Log.d(TAG, "onPause: "+ Arrays.toString(mCardModelArrayList.toArray()));
-    }
-
-    private void modifyFeatures(boolean value) {
-        mOfflineDataSharedPreference.setInternetStatus(value);
-        pullToRefreshLayout.setEnabled(value);
-        disableAddButton(value);
-        setDisconnectStatusBar(value);
-    }
-
-    private void disableAddButton(boolean value) {
-        if (value){
-            mAddNewButton.setVisibility(View.VISIBLE);
-        }else {
-            mAddNewButton.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     /**
@@ -442,8 +454,8 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerViewLocations = findViewById(R.id.locations);
         recyclerViewListener = new IRecyclerViewListener() {
             @Override
-            public void onSingleShortClickListener(String cityId, long time, String dayNight, String temperature, String description) {
-                openDetailedView(cityId, time, dayNight, temperature, description);
+            public void onSingleShortClickListener(String cityId, long time, String dayNight, String temperature, String description, String imageUrl, String cityName) {
+                openDetailedView(cityId, time, dayNight, temperature, description, imageUrl, cityName);
             }
         };
         mLocationRecyclerViewAdapter = new LocationRecyclerViewAdapter(mCardModelArrayList, this, recyclerViewListener);
@@ -481,8 +493,10 @@ public class MainActivity extends AppCompatActivity {
      * @param dayNight
      * @param temperature
      * @param description
+     * @param imageUrl
+     * @param cityName
      */
-    private void openDetailedView(String cityId, long time, String dayNight, String temperature, String description) {
+    private void openDetailedView(String cityId, long time, String dayNight, String temperature, String description, String imageUrl, String cityName) {
         Intent intent = new Intent(this, WeatherDetail.class);
         if (cityId.equals(CURRENTLOCATIONDEFAULTCITYID)) {
             cityId = CURRENTLOCATIONCITYID;
@@ -492,6 +506,9 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("day", dayNight);
         intent.putExtra("temperature", temperature);
         intent.putExtra("desc", description);
+        intent.putExtra("internetStatus", mIsInternetAvailable);
+        intent.putExtra("image", imageUrl);
+        intent.putExtra("cityName",cityName);
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }

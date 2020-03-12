@@ -104,6 +104,7 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
         ImageView cardImage;
         TextView cardFlag;
         TextView cardTime;
+        String imageUrl;
 
         MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -124,7 +125,9 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
                         mCardModelArrayList.get(getLayoutPosition()).getTime(),
                         mCardModelArrayList.get(getLayoutPosition()).getDayNight(),
                         mCardModelArrayList.get(getLayoutPosition()).getTemperature(),
-                        mCardModelArrayList.get(getLayoutPosition()).getDescription());
+                        mCardModelArrayList.get(getLayoutPosition()).getDescription(),
+                        ImageHelper.getDescriptionImageDrawable(mCardModelArrayList.get(getLayoutPosition())),
+                        mCardModelArrayList.get(getLayoutPosition()).getName());
         }
     }
 

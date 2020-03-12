@@ -43,25 +43,28 @@ public class WeatherDetail extends AppCompatActivity {
     private TextView mDetailMainTemperatureTextView;
     private ImageView mDetailMainImageView;
     private TextView mFeelsLikeTextView, mDescriptionTextView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private SwipeRefreshLayout mPullToRefresh;
+    private String mImageUrl;
+    private String mCityName;
+    private boolean mIsInternetAvailable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_detail);
+        initSwipeRelativeRefreshLayout();
         volleyInitialization();
         viewsInitialization();
         fetchCityWeatherData();
-        initSwipeRelativeRefreshLayout();
     }
 
     private void initSwipeRelativeRefreshLayout() {
-        mSwipeRefreshLayout = findViewById(R.id.pullToRefreshDetailed);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mPullToRefresh = findViewById(R.id.pullToRefreshDetailed);
+        mPullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 fetchCityWeatherData();
-                mSwipeRefreshLayout.setRefreshing(true);
+                mPullToRefresh.setRefreshing(true);
             }
         });
     }
@@ -108,8 +111,20 @@ public class WeatherDetail extends AppCompatActivity {
         mDayNight = getIntent().getStringExtra("day");
         mTemperature = getIntent().getStringExtra("temperature");
         mDescription = getIntent().getStringExtra("desc");
+        mImageUrl = getIntent().getStringExtra("image");
+        mCityName = getIntent().getStringExtra("cityName");
+        mIsInternetAvailable = getIntent().getBooleanExtra("internetStatus",false);
+        if (mIsInternetAvailable) {
+            mPullToRefresh.setEnabled(true);
+            mVolleyRequest.getWeatherForecastByCityId(mCityId, WEATHER_FORECAST_BY_ID_HTTP_REQUEST);
+        } else {
+            mPullToRefresh.setEnabled(false);
+            mDetailMainTemperatureTextView.setText(ValuesConverter.convertTemperatureToCelsius(mTemperature) + "\u00B0C");
+            Glide.with(this).load(mImageUrl).error(R.drawable.default_weather_icon).into(mDetailMainImageView);
+            mCitynameTextView.setText(mCityName);
+            mDescriptionTextView.setText(mDescription);
+        }
         Log.d(TAG, "fetchCityWeatherData: " + mCityId);
-        mVolleyRequest.getWeatherForecastByCityId(mCityId, WEATHER_FORECAST_BY_ID_HTTP_REQUEST);
     }
 
     @SuppressLint("SetTextI18n")
@@ -134,7 +149,7 @@ public class WeatherDetail extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mSwipeRefreshLayout.setRefreshing(false);
+                mPullToRefresh.setRefreshing(false);
 
             }
         }, 800);
