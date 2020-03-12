@@ -26,6 +26,7 @@ import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.shahu.weathery.adapter.LocationRecyclerViewAdapter;
 import com.shahu.weathery.common.LocationSharedPreferences;
+import com.shahu.weathery.common.OfflineDataSharedPreference;
 import com.shahu.weathery.common.VolleyRequest;
 import com.shahu.weathery.customui.CustomSearchDialog;
 import com.shahu.weathery.customui.TextHolderSubstanceCaps;
@@ -47,6 +48,7 @@ import org.json.JSONArray;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -64,8 +66,10 @@ import static com.shahu.weathery.common.Constants.WEATHER_BY_ID_HTTP_REQUEST;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-
+    private static boolean mIsInternetAvailable = false;
+    IRecyclerViewListener recyclerViewListener;
     private LocationSharedPreferences mLocationSharedPreferences;
+    private OfflineDataSharedPreference mOfflineDataSharedPreference;
     private TextHolderSubstanceCaps mDate, mTime;
     private TextView mCityName;
     private RecyclerView mRecyclerViewLocations;
@@ -113,11 +117,13 @@ public class MainActivity extends AppCompatActivity {
                         Manifest.permission.ACCESS_NETWORK_STATE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .check();
+
         NetWatch.builder(this)
                 .setCallBack(new NetworkChangeReceiver_navigator() {
                     @Override
                     public void onConnected(int source) {
                         Log.d(TAG, "onConnected: ");
+                        mOfflineDataSharedPreference.setInternetStatus(true);
                         pullToRefreshLayout.setEnabled(true);
                         setDisconnectStatusBar(false);
                         if (!setCurrentCoordinates()) {
@@ -128,17 +134,19 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onDisconnected() {
                         Log.d(TAG, "onDisconnected: ");
+                        mOfflineDataSharedPreference.setInternetStatus(false);
                         pullToRefreshLayout.setEnabled(false);
                         setDisconnectStatusBar(true);
                     }
                 })
                 .setNotificationEnabled(false)
                 .build();
+
         mCityName = findViewById(R.id.main_city_name);
         initSharedPref();
         initVolleyCallback();
         mVolleyRequest = new VolleyRequest(this, mIVolleyResponseCallback);
-        mRecyclerViewLocations = findViewById(R.id.locations);
+
         mAddNewButton = findViewById(R.id.add_new_loc_btn);
 
         mAddNewButton.setVisibility(View.VISIBLE);
@@ -158,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setDisconnectStatusBar(boolean status) {
         final TextView networkStatus = findViewById(R.id.network_status);
-        if (status) {
+        if (!status) {
             networkStatus.setVisibility(View.VISIBLE);
         } else {
             networkStatus.setVisibility(View.INVISIBLE);
@@ -193,6 +201,14 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Already Exist", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    /**
+     * Method to initialize the sharedPreference.
+     */
+    private void initSharedPref() {
+        mLocationSharedPreferences = new LocationSharedPreferences(this);
+        mOfflineDataSharedPreference = new OfflineDataSharedPreference(this);
     }
 
     /**
@@ -251,14 +267,15 @@ public class MainActivity extends AppCompatActivity {
         cardModel.setWeatherItem(mainResponse.getWeather().get(0));
         cardModel.setDayNight(ValuesConverter.getDayNight(mainResponse));
         cardModel.setDescription(mainResponse.getWeather().get(0).getDescription().toUpperCase());
-        if (mCardModelArrayList.size() != 0 && mCardModelArrayList.get(cardModel.getPosition()) != null && mCardModelArrayList.get(cardModel.getPosition()).getPosition() == cardModel.getPosition()) {
-            mCardModelArrayList.remove(mCardModelArrayList.get(cardModel.getPosition()));
+        for (Iterator<CardModel> iterator = mCardModelArrayList.iterator(); iterator.hasNext(); ) {
+            if (iterator.next().getCityId().equals(cardModel.getCityId())) {
+                iterator.remove();
+            }
         }
         mCardModelArrayList.add(cardModel);
         mLocationRecyclerViewAdapter.notifyDataSetChanged();
         mCityName.setText(String.format("%s, %s", mainResponse.getName(), mainResponse.getSys().getCountry()));
     }
-
 
     /**
      * Method to fetch all stored location.
@@ -281,6 +298,54 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        NetWatch.builder(this)
+                .setCallBack(new NetworkChangeReceiver_navigator() {
+                    @Override
+                    public void onConnected(int source) {
+                        Log.d(TAG, "onConnected: ");
+                        modifyFeatures(true);
+                        if (!setCurrentCoordinates()) {
+                            fetchAllData(mLocationSharedPreferences.getAllLocations());
+                        }
+                    }
+
+                    @Override
+                    public void onDisconnected() {
+                        Log.d(TAG, "onDisconnected: ");
+                        modifyFeatures(false);
+                    }
+                })
+                .setNotificationEnabled(false)
+                .build();
+        if (mCardModelArrayList.size() > 0) {
+            mOfflineDataSharedPreference.storeData(mCardModelArrayList);
+        }
+        mIsInternetAvailable = mOfflineDataSharedPreference.getInternetStatus();
+        Log.d(TAG, "onPause: " + mIsInternetAvailable);
+        if (mIsInternetAvailable) {
+            modifyFeatures(true);
+        } else {
+            modifyFeatures(false);
+            if (mOfflineDataSharedPreference.getOfflineData().size() > 0) {
+                //TODO: implement recycler view here.
+            }
+        }
+        Log.d(TAG, "onPause: "+ Arrays.toString(mCardModelArrayList.toArray()));
+    }
+
+    private void modifyFeatures(boolean value) {
+        mOfflineDataSharedPreference.setInternetStatus(value);
+        pullToRefreshLayout.setEnabled(value);
+        disableAddButton(value);
+        setDisconnectStatusBar(value);
+    }
+
+    private void disableAddButton(boolean value) {
+        if (value){
+            mAddNewButton.setVisibility(View.VISIBLE);
+        }else {
+            mAddNewButton.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -374,7 +439,8 @@ public class MainActivity extends AppCompatActivity {
      * initialize the recycler view.
      */
     private void initRecyclerView() {
-        IRecyclerViewListener recyclerViewListener = new IRecyclerViewListener() {
+        mRecyclerViewLocations = findViewById(R.id.locations);
+        recyclerViewListener = new IRecyclerViewListener() {
             @Override
             public void onSingleShortClickListener(String cityId, long time, String dayNight, String temperature, String description) {
                 openDetailedView(cityId, time, dayNight, temperature, description);
@@ -405,13 +471,6 @@ public class MainActivity extends AppCompatActivity {
         });
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(touchHelper);
         itemTouchHelper.attachToRecyclerView(mRecyclerViewLocations);
-    }
-
-    /**
-     * Method to initialize the sharedPreference.
-     */
-    private void initSharedPref() {
-        mLocationSharedPreferences = new LocationSharedPreferences(this);
     }
 
     /**

@@ -7,6 +7,7 @@ package com.shahu.weathery.common;
 public final class Constants {
     //URL's
     final static String LOCATION_SHARED_PREFERENCE_NAME = "locations";
+    final static String OFFLINE_DATA_SHARED_PREFERENCE_NAME = "offline_data";
     final static String OPEN_WEATHER_MAP_API_KEY = "&APPID=fea2dca909cba74286a54e5b6e9abc6c";
     final static String OPEN_WEATHER_MAP_BASE_URL = "http://api.openweathermap.org/data/2.5/";
     final static String WEATHER_BY_NAME_STRING = "weather?q=";

@@ -3,9 +3,11 @@ package com.shahu.weathery.customui;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -166,6 +168,15 @@ public class CustomSearchDialog {
             }
         });
         mAlertDialog.show();
+        mAlertDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    mAlertDialog.dismiss();
+                }
+                return true;
+            }
+        });
     }
 
 
