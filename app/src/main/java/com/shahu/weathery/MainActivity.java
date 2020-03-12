@@ -1,5 +1,6 @@
 package com.shahu.weathery;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.location.Location;
@@ -21,8 +22,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 import com.shahu.weathery.adapter.LocationRecyclerViewAdapter;
-import com.shahu.weathery.common.CheckPermissions;
 import com.shahu.weathery.common.LocationSharedPreferences;
 import com.shahu.weathery.common.VolleyRequest;
 import com.shahu.weathery.customui.CustomSearchDialog;
@@ -49,6 +51,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -59,7 +62,6 @@ import static com.shahu.weathery.common.Constants.WEATHER_BY_ID_HTTP_REQUEST;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
-    private CheckPermissions mCheckPermissions;
     private LocationSharedPreferences mLocationSharedPreferences;
     private TextHolderSubstanceCaps mDate, mTime;
     private TextView mCityName;
@@ -70,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
     private IVolleyResponse mIVolleyResponseCallback = null;
     private LocationRecyclerViewAdapter mLocationRecyclerViewAdapter;
     private SwipeRefreshLayout pullToRefreshLayout;
+    private String CURRENTLOCATIONCITYID = null;
+    private String CURRENTLOCATIONDEFAULTCITYID = "001";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,13 +89,34 @@ public class MainActivity extends AppCompatActivity {
     private void initialization() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode());
-        mCheckPermissions = new CheckPermissions(this, MainActivity.this);
         JodaTimeAndroid.init(this);
+        TedPermission.with(this)
+                .setPermissionListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted() {
+                        if(!setCurrentCoordinates()){
+                            fetchAllData(mLocationSharedPreferences.getAllLocations());
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionDenied(List<String> deniedPermissions) {
+                        if(!setCurrentCoordinates()){
+                            fetchAllData(mLocationSharedPreferences.getAllLocations());
+                        }
+                    }
+                })
+                .setPermissions(Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.INTERNET,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_NETWORK_STATE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .check();
+
         mCityName = findViewById(R.id.main_city_name);
         initSharedPref();
         initVolleyCallback();
         mVolleyRequest = new VolleyRequest(this, mIVolleyResponseCallback);
-        mCheckPermissions.checkApplicationPermissions();
         mRecyclerViewLocations = findViewById(R.id.locations);
         mAddNewButton = findViewById(R.id.add_new_loc_btn);
 
@@ -102,7 +127,9 @@ public class MainActivity extends AppCompatActivity {
                 searchForNewLocation();
             }
         });
-        setCurrentCoordinates();
+        if(!setCurrentCoordinates()){
+            fetchAllData(mLocationSharedPreferences.getAllLocations());
+        }
         mCardModelArrayList = new ArrayList<>();
         initRecyclerView();
         initPullToRefresh();
@@ -113,7 +140,9 @@ public class MainActivity extends AppCompatActivity {
         pullToRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                setCurrentCoordinates();
+                if(!setCurrentCoordinates()){
+                    fetchAllData(mLocationSharedPreferences.getAllLocations());
+                }
                 pullToRefreshLayout.setRefreshing(true);
             }
         });
@@ -159,8 +188,8 @@ public class MainActivity extends AppCompatActivity {
         cardModel.setDescription(mainResponse.getWeather().get(0).getDescription().toUpperCase());
         cardModel.setCityId(String.valueOf(mainResponse.getId()));
         cardModel.setDayNight(ValuesConverter.getDayNight(mainResponse));
-        for(Iterator<CardModel> iterator = mCardModelArrayList.iterator();iterator.hasNext();){
-            if (iterator.next().getCityId().equals(cardModel.getCityId())){
+        for (Iterator<CardModel> iterator = mCardModelArrayList.iterator(); iterator.hasNext(); ) {
+            if (iterator.next().getCityId().equals(cardModel.getCityId())) {
                 iterator.remove();
             }
         }
@@ -173,8 +202,7 @@ public class MainActivity extends AppCompatActivity {
         });
         mLocationRecyclerViewAdapter.notifyDataSetChanged();
     }
-    private String CURRENTLOCATIONCITYID = null;
-    private String CURRENTLOCATIONDEFAULTCITYID = "001";
+
     /**
      * Method to add current location plus city name to header.
      *
@@ -193,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
         cardModel.setWeatherItem(mainResponse.getWeather().get(0));
         cardModel.setDayNight(ValuesConverter.getDayNight(mainResponse));
         cardModel.setDescription(mainResponse.getWeather().get(0).getDescription().toUpperCase());
-        if (mCardModelArrayList.size()!=0&&mCardModelArrayList.get(cardModel.getPosition()) != null && mCardModelArrayList.get(cardModel.getPosition()).getPosition() == cardModel.getPosition()) {
+        if (mCardModelArrayList.size() != 0 && mCardModelArrayList.get(cardModel.getPosition()) != null && mCardModelArrayList.get(cardModel.getPosition()).getPosition() == cardModel.getPosition()) {
             mCardModelArrayList.remove(mCardModelArrayList.get(cardModel.getPosition()));
         }
         mCardModelArrayList.add(cardModel);
@@ -228,7 +256,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mCheckPermissions.checkApplicationPermissions();
     }
 
     /**
@@ -254,12 +281,14 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Method to set current location coordinates.
      */
-    private void setCurrentCoordinates() {
+    private boolean setCurrentCoordinates() {
+        final boolean[] retValue = {false};
         //TODO: check for image here
         Locator locationHelper = new Locator(this);
         locationHelper.getLocation(Locator.Method.NETWORK_THEN_GPS, new Locator.Listener() {
             @Override
             public void onLocationFound(Location location) {
+                retValue[0] = true;
                 mVolleyRequest.getWeatherByCoords(CURRENT_LOCATION_HTTP_REQUEST, location.getLongitude(), location.getLatitude());
             }
 
@@ -271,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "onLocationNotFound: ");
             }
         });
-
+        return retValue[0];
     }
 
     /**
@@ -367,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void openDetailedView(String cityId, long time, String dayNight, String temperature, String description) {
         Intent intent = new Intent(this, WeatherDetail.class);
-        if (cityId.equals(CURRENTLOCATIONDEFAULTCITYID)){
+        if (cityId.equals(CURRENTLOCATIONDEFAULTCITYID)) {
             cityId = CURRENTLOCATIONCITYID;
         }
         intent.putExtra("id", cityId);
