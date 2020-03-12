@@ -58,7 +58,7 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
         myViewHolder.cardName.setText(mCardModelArrayList.get(i).getName().toUpperCase());
         String iconUrl = ImageHelper.getDescriptionImageDrawable(mCardModelArrayList.get(i));
         Log.d(TAG, "onBindViewHolder: image URL: " + iconUrl);
-        Glide.with(mContext).load(iconUrl).into(myViewHolder.cardImage);
+        Glide.with(mContext).load(iconUrl).error(R.drawable.default_weather_icon).into(myViewHolder.cardImage);
         myViewHolder.cardTemperature.setText(ValuesConverter.convertTemperatureToCelsius(mCardModelArrayList.get(i).getTemperature()) +
                 "\u00B0C");
         myViewHolder.cardDescription.setText(mCardModelArrayList.get(i).getDescription());

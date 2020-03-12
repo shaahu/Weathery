@@ -55,6 +55,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import ir.drax.netwatch.NetWatch;
+import ir.drax.netwatch.cb.NetworkChangeReceiver_navigator;
+
 import static com.shahu.weathery.common.Constants.CITIES_DATA_FOR_SEARCH_LIST;
 import static com.shahu.weathery.common.Constants.CURRENT_LOCATION_HTTP_REQUEST;
 import static com.shahu.weathery.common.Constants.WEATHER_BY_ID_HTTP_REQUEST;
@@ -94,16 +97,14 @@ public class MainActivity extends AppCompatActivity {
                 .setPermissionListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted() {
-                        if(!setCurrentCoordinates()){
+                        if (!setCurrentCoordinates()) {
                             fetchAllData(mLocationSharedPreferences.getAllLocations());
                         }
                     }
 
                     @Override
                     public void onPermissionDenied(List<String> deniedPermissions) {
-                        if(!setCurrentCoordinates()){
-                            fetchAllData(mLocationSharedPreferences.getAllLocations());
-                        }
+                        fetchAllData(mLocationSharedPreferences.getAllLocations());
                     }
                 })
                 .setPermissions(Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -112,7 +113,27 @@ public class MainActivity extends AppCompatActivity {
                         Manifest.permission.ACCESS_NETWORK_STATE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .check();
+        NetWatch.builder(this)
+                .setCallBack(new NetworkChangeReceiver_navigator() {
+                    @Override
+                    public void onConnected(int source) {
+                        Log.d(TAG, "onConnected: ");
+                        pullToRefreshLayout.setEnabled(true);
+                        setDisconnectStatusBar(false);
+                        if (!setCurrentCoordinates()) {
+                            fetchAllData(mLocationSharedPreferences.getAllLocations());
+                        }
+                    }
 
+                    @Override
+                    public void onDisconnected() {
+                        Log.d(TAG, "onDisconnected: ");
+                        pullToRefreshLayout.setEnabled(false);
+                        setDisconnectStatusBar(true);
+                    }
+                })
+                .setNotificationEnabled(false)
+                .build();
         mCityName = findViewById(R.id.main_city_name);
         initSharedPref();
         initVolleyCallback();
@@ -127,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                 searchForNewLocation();
             }
         });
-        if(!setCurrentCoordinates()){
+        if (!setCurrentCoordinates()) {
             fetchAllData(mLocationSharedPreferences.getAllLocations());
         }
         mCardModelArrayList = new ArrayList<>();
@@ -135,12 +156,21 @@ public class MainActivity extends AppCompatActivity {
         initPullToRefresh();
     }
 
+    private void setDisconnectStatusBar(boolean status) {
+        final TextView networkStatus = findViewById(R.id.network_status);
+        if (status) {
+            networkStatus.setVisibility(View.VISIBLE);
+        } else {
+            networkStatus.setVisibility(View.INVISIBLE);
+        }
+    }
+
     private void initPullToRefresh() {
         pullToRefreshLayout = findViewById(R.id.pullToRefresh);
         pullToRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(!setCurrentCoordinates()){
+                if (!setCurrentCoordinates()) {
                     fetchAllData(mLocationSharedPreferences.getAllLocations());
                 }
                 pullToRefreshLayout.setRefreshing(true);
@@ -327,7 +357,6 @@ public class MainActivity extends AppCompatActivity {
                     case WEATHER_BY_ID_HTTP_REQUEST:
                         break;
                 }
-                Toast.makeText(MainActivity.this, volleyError.toString(), Toast.LENGTH_SHORT).show();
             }
 
             @Override

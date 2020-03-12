@@ -18,6 +18,20 @@
         android:letterSpacing="0.1"
         android:textSize="16sp" />
 
+    <TextView
+        android:id="@+id/network_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/montserrat_regular"
+        android:gravity="center"
+        android:text="No internet connection"
+        android:letterSpacing="0.1"
+        android:visibility="invisible"
+        android:background="@color/chocolate"
+        android:textSize="16sp" />
+
     <RelativeLayout
         android:id="@+id/date_time_RL"
         android:layout_width="wrap_content"
