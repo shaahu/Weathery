@@ -88,6 +88,11 @@ public class WeatherDetail extends AppCompatActivity {
             public void onSuccessJsonArrayResponse(JSONArray jsonObject, String requestType) {
 
             }
+
+            @Override
+            public void onStringSuccessRequest(String response, String requestType) {
+
+            }
         };
         mVolleyRequest = new VolleyRequest(this, mIVolleyResponseCallback);
     }

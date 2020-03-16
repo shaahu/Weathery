@@ -7,15 +7,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.shahu.weathery.interface2.IVolleyResponse;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import static com.shahu.weathery.common.Constants.ADKRAFT_BASE_URL;
 import static com.shahu.weathery.common.Constants.ADKRAFT_GET_CITIES;
@@ -122,23 +119,19 @@ public class VolleyRequest {
 
     public void getCitiesData(final String name, final String requestType) {
         final String url = ADKRAFT_BASE_URL + ADKRAFT_GET_CITIES + name;
-        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
+        StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
             @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    mIVolleyResponse.onSuccessJsonArrayResponse(response, requestType);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            public void onResponse(String response) {
+                if (mIVolleyResponse!=null){
+                    mIVolleyResponse.onStringSuccessRequest(response,requestType);
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "onErrorResponse: " + error);
+
             }
         });
-
-
-        mRequestQueue.add(jsonObjectRequest);
+        mRequestQueue.add(stringRequest);
     }
 }

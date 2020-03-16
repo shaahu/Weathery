@@ -26,7 +26,6 @@ import com.shahu.weathery.model.CitySearchItem;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,9 +73,17 @@ public class CustomSearchDialog {
 
             @Override
             public void onSuccessJsonArrayResponse(JSONArray jsonArray, String requestType) throws JSONException {
+
+            }
+
+            @Override
+            public void onStringSuccessRequest(String response, String requestType) {
                 if (requestType.equals(CITIES_DATA_FOR_SEARCH_LIST)) {
+                    response = response.replace("\n", "");
+                    response = response.replace("[", "");
+                    response = response.replace("]", "");
                     List<CitySearchItem> filteredValues = new ArrayList<>();
-                    if (jsonArray.length() == 0) {
+                    if (response.isEmpty()) {
                         CitySearchItem item = new CitySearchItem(0, "Not found!", "XX");
                         filteredValues.add(item);
                         mSearchDialogListAdapter = new SearchDialogListAdapter(mActivity, R.layout.items_view_layout, R.id.cityCountryRL,
@@ -84,14 +91,7 @@ public class CustomSearchDialog {
                         mListView.setAdapter(mSearchDialogListAdapter);
                         return;
                     }
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        final int id = jsonObject.getInt("id");
-                        final String name = jsonObject.getString("name");
-                        final String countryCode = jsonObject.getString("country");
-                        CitySearchItem item = new CitySearchItem(id, name, countryCode);
-                        filteredValues.add(item);
-                    }
+                    filteredValues = getCitySearchItemList(response);
                     mSearchDialogListAdapter = new SearchDialogListAdapter(mActivity, R.layout.items_view_layout, R.id.cityCountryRL, filteredValues);
                     mListView.setAdapter(mSearchDialogListAdapter);
                 }
@@ -101,9 +101,29 @@ public class CustomSearchDialog {
         ;
     }
 
+    private List<CitySearchItem> getCitySearchItemList(String response) {
+        List<CitySearchItem> returnList = new ArrayList<>();
+        response = response.replace("\'", "");
+        String[] items = response.split(", ");
+        for (String stringLine : items) {
+            String[] splitString = stringLine.split("#");
+            if (splitString.length > 0) {
+                //Log.d(TAG, "getCitySearchItemList: "+ Arrays.toString(splitString));
+                if (!splitString[1].equals("")) {
+                    String cityName = splitString[0];
+                    int id = Integer.parseInt(splitString[1]);
+                    String countryCode = splitString[2];
+                    CitySearchItem citySearchItem = new CitySearchItem(id, cityName, countryCode);
+                    returnList.add(citySearchItem);
+                }
+            }
+        }
+        return returnList;
+    }
+
     /***
      *
-     * show the seachable dialog
+     * show the searchable dialog
      */
     public void show() {
         final AlertDialog.Builder adb = new AlertDialog.Builder(mActivity);
@@ -123,7 +143,7 @@ public class CustomSearchDialog {
         searchGoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mVolleyRequest.getCitiesData(searchBox.getText().toString(), CITIES_DATA_FOR_SEARCH_LIST);
+
             }
         });
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -158,6 +178,9 @@ public class CustomSearchDialog {
 
             @Override
             public void afterTextChanged(Editable editable) {
+                if (editable.length() > 2) {
+                    mVolleyRequest.getCitiesData(searchBox.getText().toString(), CITIES_DATA_FOR_SEARCH_LIST);
+                }
             }
         });
 

@@ -17,4 +17,6 @@ public interface IVolleyResponse {
     public void onRequestFailure(VolleyError volleyError, String requestType);
 
     public void onSuccessJsonArrayResponse(JSONArray jsonObject, String requestType) throws JSONException;
+
+    void onStringSuccessRequest(String response, String requestType);
 }
