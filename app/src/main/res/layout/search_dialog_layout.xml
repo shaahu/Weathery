@@ -36,9 +36,10 @@
                 android:id="@+id/searchBox"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
                 android:background="#00000000"
-                android:inputType="text"/>
+                android:hint="@string/search_hint"
+                android:inputType="text" />
 
         </LinearLayout>
 
@@ -47,41 +48,53 @@
             android:layout_height="0.5dp"
             android:background="@color/lineDarkColor" />
 
-        <ListView
-            android:id="@+id/list"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:dividerHeight="0.1dp" />
+            android:layout_height="300dp">
+
+            <ListView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:dividerHeight="0.1dp" />
+
+            <ProgressBar
+                android:visibility="gone"
+                android:id="@+id/search_progress_bar"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+
 
         <RelativeLayout
-            android:layout_gravity="right"
-            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:id="@+id/search_go_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clickable="true"
                 android:layout_marginEnd="10dp"
-                android:visibility="invisible"
-                android:padding="5dp"
+                android:clickable="true"
                 android:enabled="false"
+                android:padding="5dp"
                 android:text="Search"
-                android:textAllCaps="true" />
+                android:textAllCaps="true"
+                android:visibility="invisible" />
 
             <TextView
                 android:id="@+id/close"
-                android:layout_toEndOf="@id/search_go_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/search_go_btn"
                 android:clickable="true"
                 android:padding="5dp"
                 android:text="Close"
                 android:textAllCaps="true" />
         </RelativeLayout>
-
 
 
     </LinearLayout>

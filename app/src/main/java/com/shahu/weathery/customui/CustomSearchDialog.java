@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -50,6 +51,7 @@ public class CustomSearchDialog {
     private String mDialogTitle = "Enter City Name";
     private VolleyRequest mVolleyRequest;
     private IVolleyResponse mIVolleyResponseCallback = null;
+    private ProgressBar mSearchProgressBar;
 
     public CustomSearchDialog(Context context, Activity activity, List<CitySearchItem> searchListItems) {
         this.mCitySearchItemsList = searchListItems;
@@ -79,6 +81,7 @@ public class CustomSearchDialog {
             @Override
             public void onStringSuccessRequest(String response, String requestType) {
                 if (requestType.equals(CITIES_DATA_FOR_SEARCH_LIST)) {
+                    mSearchProgressBar.setVisibility(View.INVISIBLE);
                     response = response.replace("\n", "");
                     response = response.replace("[", "");
                     response = response.replace("]", "");
@@ -86,8 +89,9 @@ public class CustomSearchDialog {
                     if (response.isEmpty()) {
                         CitySearchItem item = new CitySearchItem(0, "Not found!", "XX");
                         filteredValues.add(item);
-                        mSearchDialogListAdapter = new SearchDialogListAdapter(mActivity, R.layout.items_view_layout, R.id.cityCountryRL,
-                                filteredValues);
+                        mSearchDialogListAdapter =
+                                new SearchDialogListAdapter(
+                                        mActivity, R.layout.items_view_layout, R.id.cityCountryRL, filteredValues);
                         mListView.setAdapter(mSearchDialogListAdapter);
                         return;
                     }
@@ -127,12 +131,12 @@ public class CustomSearchDialog {
      */
     public void show() {
         final AlertDialog.Builder adb = new AlertDialog.Builder(mActivity);
-        View view = mActivity.getLayoutInflater().inflate(R.layout.search_dialog_layout, null);
+        final View view = mActivity.getLayoutInflater().inflate(R.layout.search_dialog_layout, null);
         TextView rippleViewClose = (TextView) view.findViewById(R.id.close);
         TextView title = (TextView) view.findViewById(R.id.spinerTitle);
         title.setText(mDialogTitle);
         mListView = (ListView) view.findViewById(R.id.list);
-
+        mSearchProgressBar = view.findViewById(R.id.search_progress_bar);
         final EditText searchBox = (EditText) view.findViewById(R.id.searchBox);
         mSearchDialogListAdapter = new SearchDialogListAdapter(mActivity, R.layout.items_view_layout, R.id.cityCountryRL, mCitySearchItemsList);
         mListView.setAdapter(mSearchDialogListAdapter);
@@ -178,8 +182,10 @@ public class CustomSearchDialog {
 
             @Override
             public void afterTextChanged(Editable editable) {
+                mListView.setAdapter(null);
                 if (editable.length() > 2) {
                     mVolleyRequest.getCitiesData(searchBox.getText().toString(), CITIES_DATA_FOR_SEARCH_LIST);
+                    mSearchProgressBar.setVisibility(View.VISIBLE);
                 }
             }
         });
