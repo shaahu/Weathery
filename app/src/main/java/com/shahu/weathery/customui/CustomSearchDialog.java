@@ -118,11 +118,22 @@ public class CustomSearchDialog {
                     int id = Integer.parseInt(splitString[1]);
                     String countryCode = splitString[2];
                     CitySearchItem citySearchItem = new CitySearchItem(id, cityName, countryCode);
-                    returnList.add(citySearchItem);
+                    if (!checkForDuplicate(returnList, citySearchItem)) {
+                        returnList.add(citySearchItem);
+                    }
                 }
             }
         }
         return returnList;
+    }
+
+    private boolean checkForDuplicate(List<CitySearchItem> returnList, CitySearchItem citySearchItem) {
+        for (CitySearchItem item : returnList) {
+            if (item.getCityName().equals(citySearchItem.getCityName())
+                    && item.getCountryCode().equals(citySearchItem.getCountryCode()))
+                return true;
+        }
+        return false;
     }
 
     /***
