@@ -37,4 +37,15 @@ public final class Constants {
     //Time
     public static final String DAY = "day";
     public static final String NIGHT = "night";
+
+    //onClick bundle constants
+    public static final String BUNDLE_NAME = "theBundle";
+    public static final String BUNDLE_CITY_ID = "CITY_ID";
+    public static final String BUNDLE_TIME = "TIME";
+    public static final String BUNDLE_DAY_NIGHT = "DAY_NIGHT";
+    public static final String BUNDLE_TEMPERATURE = "TEMPERATURE";
+    public static final String BUNDLE_DESCRIPTION = "DESCRIPTION";
+    public static final String BUNDLE_IMAGE_URL = "IMAGE_URL";
+    public static final String BUNDLE_CITY_NAME = "CITY_NAME";
+    public static final String BUNDLE_INTERNET_AVAILABILITY = "internetAvailable";
 }

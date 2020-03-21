@@ -4,6 +4,6 @@
     <string name="pressure">pressure</string>
     <string name="humidity">humidity</string>
     <string name="cloudiness">Cloudiness</string>
-    <string name="search_hint">Type atleast 3 characters to start search</string>
+    <string name="search_hint"><font size="12">Type atleast 3 characters to start search</font></string>
 
 </resources>

@@ -4,7 +4,6 @@ package com.shahu.weathery;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +14,7 @@ import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.shahu.weathery.common.Constants;
 import com.shahu.weathery.common.VolleyRequest;
 import com.shahu.weathery.customui.CitynameTextView;
 import com.shahu.weathery.customui.TextHolderSubstanceCaps;
@@ -81,17 +81,14 @@ public class WeatherDetail extends AppCompatActivity {
 
             @Override
             public void onRequestFailure(VolleyError volleyError, String requestType) {
-                Log.d(TAG, "onRequestFailure: " + volleyError.getMessage());
             }
 
             @Override
             public void onSuccessJsonArrayResponse(JSONArray jsonObject, String requestType) {
-
             }
 
             @Override
             public void onStringSuccessRequest(String response, String requestType) {
-
             }
         };
         mVolleyRequest = new VolleyRequest(this, mIVolleyResponseCallback);
@@ -111,14 +108,15 @@ public class WeatherDetail extends AppCompatActivity {
     }
 
     private void fetchCityWeatherData() {
-        mCityId = getIntent().getStringExtra("id");
-        mCurrentTime = getIntent().getLongExtra("time", 0);
-        mDayNight = getIntent().getStringExtra("day");
-        mTemperature = getIntent().getStringExtra("temperature");
-        mDescription = getIntent().getStringExtra("desc");
-        mImageUrl = getIntent().getStringExtra("image");
-        mCityName = getIntent().getStringExtra("cityName");
-        mIsInternetAvailable = getIntent().getBooleanExtra("internetStatus",false);
+        Bundle bundle = getIntent().getBundleExtra(Constants.BUNDLE_NAME);
+        mCityId = bundle.getString(Constants.BUNDLE_CITY_ID);
+        mCurrentTime = bundle.getLong(Constants.BUNDLE_TIME);
+        mDayNight = bundle.getString(Constants.BUNDLE_DAY_NIGHT);
+        mTemperature = bundle.getString(Constants.BUNDLE_TEMPERATURE);
+        mDescription = bundle.getString(Constants.BUNDLE_DESCRIPTION);
+        mImageUrl = bundle.getString(Constants.BUNDLE_IMAGE_URL);
+        mCityName = bundle.getString(Constants.BUNDLE_CITY_NAME);
+        mIsInternetAvailable = bundle.getBoolean(Constants.BUNDLE_INTERNET_AVAILABILITY);
         if (mIsInternetAvailable) {
             mPullToRefresh.setEnabled(true);
             mVolleyRequest.getWeatherForecastByCityId(mCityId, WEATHER_FORECAST_BY_ID_HTTP_REQUEST);
@@ -129,7 +127,6 @@ public class WeatherDetail extends AppCompatActivity {
             mCitynameTextView.setText(mCityName);
             mDescriptionTextView.setText(mDescription);
         }
-        Log.d(TAG, "fetchCityWeatherData: " + mCityId);
     }
 
     @SuppressLint("SetTextI18n")
@@ -143,7 +140,6 @@ public class WeatherDetail extends AppCompatActivity {
         cardModel.setWeatherItem(forecastResponse.getList().get(0).getWeather().get(0));
         cardModel.setDayNight(mDayNight);
         String iconUrl = ImageHelper.getDescriptionImageDrawable(cardModel);
-        Log.d(TAG, "weatherReqComplete: image URL: " + iconUrl);
         Glide.with(this).load(iconUrl).into(mDetailMainImageView);
         mDetailMainTemperatureTextView.setText(ValuesConverter.convertTemperatureToCelsius(mTemperature) + "\u00B0C");
         mFeelsLikeTextView.setText("feels like " + ValuesConverter.convertTemperatureToCelsius(String.valueOf(forecastResponse.getList().get(0).getMain().getFeelsLike())) + "\u00B0C");

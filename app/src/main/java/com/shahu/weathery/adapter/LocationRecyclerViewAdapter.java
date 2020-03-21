@@ -2,10 +2,7 @@ package com.shahu.weathery.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.GradientDrawable;
-import android.util.Log;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +11,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.shahu.weathery.R;
+import com.shahu.weathery.common.Constants;
 import com.shahu.weathery.customui.CitynameTextView;
 import com.shahu.weathery.helper.ImageHelper;
 import com.shahu.weathery.helper.ValuesConverter;
@@ -56,31 +52,17 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder myViewHolder, int i) {
         myViewHolder.cardName.setText(mCardModelArrayList.get(i).getName().toUpperCase());
-        String iconUrl = ImageHelper.getDescriptionImageDrawable(mCardModelArrayList.get(i));
-        Log.d(TAG, "onBindViewHolder: image URL: " + iconUrl);
+        final String iconUrl = ImageHelper.getDescriptionImageDrawable(mCardModelArrayList.get(i));
         Glide.with(mContext).load(iconUrl).error(R.drawable.default_weather_icon).into(myViewHolder.cardImage);
-        myViewHolder.cardTemperature.setText(ValuesConverter.convertTemperatureToCelsius(mCardModelArrayList.get(i).getTemperature()) +
-                "\u00B0C");
+        myViewHolder.cardTemperature.setText(
+                ValuesConverter.convertTemperatureToCelsius(mCardModelArrayList.get(i).getTemperature()) + "\u00B0C");
         myViewHolder.cardDescription.setText(mCardModelArrayList.get(i).getDescription());
         myViewHolder.cityId = mCardModelArrayList.get(i).getCityId();
         myViewHolder.cardFlag.setText(ValuesConverter.getCountryImage(mCardModelArrayList.get(i).getCountryCode()));
         myViewHolder.cardImage.buildDrawingCache();
-        if (( myViewHolder.cardImage.getDrawable()) != null) {
-            Bitmap bitmap = ((BitmapDrawable) myViewHolder.cardImage.getDrawable()).getBitmap();
-            Palette.generateAsync(bitmap, new Palette.PaletteAsyncListener() {
-                @Override
-                public void onGenerated(@Nullable Palette palette) {
-                    if (palette != null) {
-                        GradientDrawable relativeLayoutBackground = (GradientDrawable) myViewHolder.mainRelativeLayout.getBackground();
-                        int color = palette.getVibrantColor(mContext.getResources().getColor(R.color.black));
-                        relativeLayoutBackground.setColor(color);
-                        relativeLayoutBackground.setAlpha(75);
-                    }
-                }
-            });
-        }
         if (mCardModelArrayList.get(i).getTime() != 0) {
-            String time = ValuesConverter.getTimeForCity(mCardModelArrayList.get(i).getTime(), mCardModelArrayList.get(i).getSecondsShift());
+            String time = ValuesConverter.getTimeForCity(
+                    mCardModelArrayList.get(i).getTime(), mCardModelArrayList.get(i).getSecondsShift());
             myViewHolder.cardTime.setText(time);
         }
     }
@@ -104,7 +86,6 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
         ImageView cardImage;
         TextView cardFlag;
         TextView cardTime;
-        String imageUrl;
 
         MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -120,14 +101,19 @@ public class LocationRecyclerViewAdapter extends RecyclerView.Adapter<LocationRe
 
         @Override
         public void onClick(View v) {
-            if (mIRecyclerViewListener != null)
-                mIRecyclerViewListener.onSingleShortClickListener(mCardModelArrayList.get(getLayoutPosition()).getCityId(),
-                        mCardModelArrayList.get(getLayoutPosition()).getTime(),
-                        mCardModelArrayList.get(getLayoutPosition()).getDayNight(),
-                        mCardModelArrayList.get(getLayoutPosition()).getTemperature(),
-                        mCardModelArrayList.get(getLayoutPosition()).getDescription(),
-                        ImageHelper.getDescriptionImageDrawable(mCardModelArrayList.get(getLayoutPosition())),
-                        mCardModelArrayList.get(getLayoutPosition()).getName());
+            if (mIRecyclerViewListener != null) {
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.BUNDLE_CITY_ID, mCardModelArrayList.get(getLayoutPosition()).getCityId());
+                bundle.putString(Constants.BUNDLE_CITY_NAME, mCardModelArrayList.get(getLayoutPosition()).getName());
+                bundle.putString(Constants.BUNDLE_DAY_NIGHT, mCardModelArrayList.get(getLayoutPosition()).getDayNight());
+                bundle.putLong(Constants.BUNDLE_TIME, mCardModelArrayList.get(getLayoutPosition()).getTime());
+                bundle.putString(Constants.BUNDLE_DESCRIPTION, mCardModelArrayList.get(getLayoutPosition()).getDescription());
+                bundle.putString(Constants.BUNDLE_TEMPERATURE, mCardModelArrayList.get(getLayoutPosition()).getTemperature());
+                bundle.putString(Constants.BUNDLE_IMAGE_URL,
+                        ImageHelper.getDescriptionImageDrawable(mCardModelArrayList.get(getLayoutPosition())));
+
+                mIRecyclerViewListener.onSingleShortClickListener(bundle);
+            }
         }
     }
 

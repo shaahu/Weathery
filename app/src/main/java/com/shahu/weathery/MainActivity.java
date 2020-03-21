@@ -25,6 +25,7 @@ import com.google.gson.JsonObject;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.shahu.weathery.adapter.LocationRecyclerViewAdapter;
+import com.shahu.weathery.common.Constants;
 import com.shahu.weathery.common.LocationSharedPreferences;
 import com.shahu.weathery.common.OfflineDataSharedPreference;
 import com.shahu.weathery.common.VolleyRequest;
@@ -56,11 +57,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import ir.drax.netwatch.NetWatch;
 import ir.drax.netwatch.cb.NetworkChangeReceiver_navigator;
 
-import static com.shahu.weathery.common.Constants.CITIES_DATA_FOR_SEARCH_LIST;
 import static com.shahu.weathery.common.Constants.CURRENT_LOCATION_HTTP_REQUEST;
 import static com.shahu.weathery.common.Constants.WEATHER_BY_ID_HTTP_REQUEST;
 
@@ -430,24 +431,14 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onRequestFailure(VolleyError volleyError, String requestType) {
-                switch (requestType) {
-                    case WEATHER_BY_ID_HTTP_REQUEST:
-                        break;
-                }
             }
 
             @Override
             public void onSuccessJsonArrayResponse(JSONArray jsonObject, String requestType) {
-                switch (requestType) {
-                    case CITIES_DATA_FOR_SEARCH_LIST:
-                        Log.d(TAG, "onSuccessJsonArrayResponse: " + jsonObject.toString());
-                        break;
-                }
             }
 
             @Override
             public void onStringSuccessRequest(String response, String requestType) {
-                Log.d(TAG, "onStringSuccessRequest: "+response);
             }
         };
     }
@@ -459,17 +450,18 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerViewLocations = findViewById(R.id.locations);
         recyclerViewListener = new IRecyclerViewListener() {
             @Override
-            public void onSingleShortClickListener(String cityId, long time, String dayNight, String temperature, String description, String imageUrl, String cityName) {
-                openDetailedView(cityId, time, dayNight, temperature, description, imageUrl, cityName);
+            public void onSingleShortClickListener(Bundle bundle) {
+                openDetailedView(bundle);
             }
         };
-        mLocationRecyclerViewAdapter = new LocationRecyclerViewAdapter(mCardModelArrayList, this, recyclerViewListener);
+        mLocationRecyclerViewAdapter =
+                new LocationRecyclerViewAdapter(mCardModelArrayList, this, recyclerViewListener);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerViewLocations.setLayoutManager(layoutManager);
         mRecyclerViewLocations.setAdapter(mLocationRecyclerViewAdapter);
 
-        RecyclerViewItemHelper<CardModel> touchHelper = new RecyclerViewItemHelper<>(mCardModelArrayList,
-                (RecyclerView.Adapter) mLocationRecyclerViewAdapter);
+        RecyclerViewItemHelper<CardModel> touchHelper =
+                new RecyclerViewItemHelper<>(mCardModelArrayList, (RecyclerView.Adapter) mLocationRecyclerViewAdapter);
         touchHelper.setRecyclerItemDragEnabled(true).setOnDragItemListener(new OnDragListener() {
             @Override
             public void onDragItemListener(int fromPosition, int toPosition) {
@@ -490,30 +482,13 @@ public class MainActivity extends AppCompatActivity {
         itemTouchHelper.attachToRecyclerView(mRecyclerViewLocations);
     }
 
-    /**
-     * gets called when click on list item to show detailed view.
-     *
-     * @param cityId      city identifier
-     * @param time
-     * @param dayNight
-     * @param temperature
-     * @param description
-     * @param imageUrl
-     * @param cityName
-     */
-    private void openDetailedView(String cityId, long time, String dayNight, String temperature, String description, String imageUrl, String cityName) {
+    private void openDetailedView(Bundle bundle) {
         Intent intent = new Intent(this, WeatherDetail.class);
-        if (cityId.equals(CURRENTLOCATIONDEFAULTCITYID)) {
-            cityId = CURRENTLOCATIONCITYID;
+        if (Objects.equals(bundle.getString(Constants.BUNDLE_CITY_ID), CURRENTLOCATIONDEFAULTCITYID)) {
+            bundle.putString(Constants.BUNDLE_CITY_ID, CURRENTLOCATIONCITYID);
         }
-        intent.putExtra("id", cityId);
-        intent.putExtra("time", time);
-        intent.putExtra("day", dayNight);
-        intent.putExtra("temperature", temperature);
-        intent.putExtra("desc", description);
-        intent.putExtra("internetStatus", mIsInternetAvailable);
-        intent.putExtra("image", imageUrl);
-        intent.putExtra("cityName",cityName);
+        bundle.putBoolean(Constants.BUNDLE_INTERNET_AVAILABILITY,mIsInternetAvailable);
+        intent.putExtra(Constants.BUNDLE_NAME,bundle);
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }

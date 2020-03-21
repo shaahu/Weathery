@@ -26,7 +26,6 @@ import com.shahu.weathery.interface2.OnSearchItemSelection;
 import com.shahu.weathery.model.CitySearchItem;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +51,7 @@ public class CustomSearchDialog {
     private VolleyRequest mVolleyRequest;
     private IVolleyResponse mIVolleyResponseCallback = null;
     private ProgressBar mSearchProgressBar;
+    private boolean mEmptyListFlag;
 
     public CustomSearchDialog(Context context, Activity activity, List<CitySearchItem> searchListItems) {
         this.mCitySearchItemsList = searchListItems;
@@ -74,12 +74,16 @@ public class CustomSearchDialog {
             }
 
             @Override
-            public void onSuccessJsonArrayResponse(JSONArray jsonArray, String requestType) throws JSONException {
+            public void onSuccessJsonArrayResponse(JSONArray jsonArray, String requestType) {
 
             }
 
             @Override
             public void onStringSuccessRequest(String response, String requestType) {
+                if (mEmptyListFlag) {
+                    mSearchProgressBar.setVisibility(View.GONE);
+                    return;
+                }
                 if (requestType.equals(CITIES_DATA_FOR_SEARCH_LIST)) {
                     mSearchProgressBar.setVisibility(View.INVISIBLE);
                     response = response.replace("\n", "");
@@ -96,7 +100,9 @@ public class CustomSearchDialog {
                         return;
                     }
                     filteredValues = getCitySearchItemList(response);
-                    mSearchDialogListAdapter = new SearchDialogListAdapter(mActivity, R.layout.items_view_layout, R.id.cityCountryRL, filteredValues);
+                    mSearchDialogListAdapter =
+                            new SearchDialogListAdapter(
+                                    mActivity, R.layout.items_view_layout, R.id.cityCountryRL, filteredValues);
                     mListView.setAdapter(mSearchDialogListAdapter);
                 }
             }
@@ -112,7 +118,6 @@ public class CustomSearchDialog {
         for (String stringLine : items) {
             String[] splitString = stringLine.split("#");
             if (splitString.length > 0) {
-                //Log.d(TAG, "getCitySearchItemList: "+ Arrays.toString(splitString));
                 if (!splitString[1].equals("")) {
                     String cityName = splitString[0];
                     int id = Integer.parseInt(splitString[1]);
@@ -184,10 +189,11 @@ public class CustomSearchDialog {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.length() >= 3) {
-                    searchGoBtn.setEnabled(true);
+                if (charSequence.length() <= 2) {
+                    mListView.setAdapter(null);
+                    mEmptyListFlag = true;
                 } else {
-                    searchGoBtn.setEnabled(false);
+                    mEmptyListFlag = false;
                 }
             }
 
