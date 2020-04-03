@@ -2,8 +2,8 @@ package com.shahu.weathery.helper;
 
 import com.shahu.weathery.model.CardModel;
 
-import static com.shahu.weathery.common.Constants.ADKRAFT_BASE_URL;
-import static com.shahu.weathery.common.Constants.ADKRAFT_WEATHER_IMAGES;
+import static com.shahu.weathery.common.Constants.API_BASE_URL;
+import static com.shahu.weathery.common.Constants.WEATHER_ICONS;
 import static com.shahu.weathery.common.Constants.DAY;
 import static com.shahu.weathery.common.Constants.NIGHT;
 import static com.shahu.weathery.common.Constants.WEATHER_ICONS_DAY;
@@ -176,11 +176,11 @@ public class ImageHelper {
     }
 
     private static String buildImagePath(String fileName) {
-        String path = ADKRAFT_BASE_URL + ADKRAFT_WEATHER_IMAGES + "/day/clear";
+        String path = API_BASE_URL + WEATHER_ICONS + "/day/clear";
         if (mTime.equals(DAY))
-            path = ADKRAFT_BASE_URL + ADKRAFT_WEATHER_IMAGES + WEATHER_ICONS_DAY + fileName + ".png";
+            path = API_BASE_URL + WEATHER_ICONS + WEATHER_ICONS_DAY + fileName + ".png";
         if (mTime.equals(NIGHT))
-            path = ADKRAFT_BASE_URL + ADKRAFT_WEATHER_IMAGES + WEATHER_ICONS_NIGHT + fileName + ".png";
+            path = API_BASE_URL + WEATHER_ICONS + WEATHER_ICONS_NIGHT + fileName + ".png";
         return path;
     }
 }

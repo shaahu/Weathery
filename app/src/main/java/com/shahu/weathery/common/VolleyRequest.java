@@ -14,8 +14,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.shahu.weathery.interface2.IVolleyResponse;
 
-import static com.shahu.weathery.common.Constants.ADKRAFT_BASE_URL;
-import static com.shahu.weathery.common.Constants.ADKRAFT_GET_CITIES;
+import org.json.JSONObject;
+
+import static com.shahu.weathery.common.Constants.API_BASE_URL;
+import static com.shahu.weathery.common.Constants.API_GET_CITIES;
 import static com.shahu.weathery.common.Constants.OPEN_WEATHER_MAP_API_KEY;
 import static com.shahu.weathery.common.Constants.OPEN_WEATHER_MAP_BASE_URL;
 import static com.shahu.weathery.common.Constants.WEATHER_BY_CITY_ID;
@@ -40,9 +42,9 @@ public class VolleyRequest {
         final String url = OPEN_WEATHER_MAP_BASE_URL + WEATHER_BY_COORDS_STRING + "lat=" + lat + "&lon=" + lon + OPEN_WEATHER_MAP_API_KEY;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url
                 , null,
-                new Response.Listener() {
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(Object response) {
+                    public void onResponse(JSONObject response) {
                         JsonParser jsonParser = new JsonParser();
                         JsonObject object = (JsonObject) jsonParser.parse(response.toString());
                         if (mIVolleyResponse != null)
@@ -67,14 +69,13 @@ public class VolleyRequest {
         final String url = OPEN_WEATHER_MAP_BASE_URL + WEATHER_BY_CITY_ID + id + OPEN_WEATHER_MAP_API_KEY;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url
                 , null,
-                new Response.Listener() {
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(Object response) {
+                    public void onResponse(JSONObject response) {
                         JsonParser jsonParser = new JsonParser();
                         JsonObject object = (JsonObject) jsonParser.parse(response.toString());
                         if (mIVolleyResponse != null)
                             mIVolleyResponse.onSuccessResponse(object, requestType);
-                        Log.e(TAG, "onResponse: " + url);
                     }
                 },
                 new Response.ErrorListener() {
@@ -94,14 +95,13 @@ public class VolleyRequest {
         final String url = OPEN_WEATHER_MAP_BASE_URL + WEATHER_FORECAST_BY_CITY_ID + id + OPEN_WEATHER_MAP_API_KEY;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url
                 , null,
-                new Response.Listener() {
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(Object response) {
+                    public void onResponse(JSONObject response) {
                         JsonParser jsonParser = new JsonParser();
                         JsonObject object = (JsonObject) jsonParser.parse(response.toString());
                         if (mIVolleyResponse != null)
                             mIVolleyResponse.onSuccessResponse(object, requestType);
-                        Log.e(TAG, "onResponse: " + url);
                     }
                 },
                 new Response.ErrorListener() {
@@ -118,18 +118,18 @@ public class VolleyRequest {
     }
 
     public void getCitiesData(final String name, final String requestType) {
-        final String url = ADKRAFT_BASE_URL + ADKRAFT_GET_CITIES + name;
+        final String url = API_BASE_URL + API_GET_CITIES + name;
         StringRequest stringRequest = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                if (mIVolleyResponse!=null){
-                    mIVolleyResponse.onStringSuccessRequest(response,requestType);
+                if (mIVolleyResponse != null) {
+                    mIVolleyResponse.onStringSuccessRequest(response, requestType);
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Log.e(TAG, "onErrorResponse: ", error);
             }
         });
         mRequestQueue.add(stringRequest);

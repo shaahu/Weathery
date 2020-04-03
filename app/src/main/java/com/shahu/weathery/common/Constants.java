@@ -15,9 +15,9 @@ public final class Constants {
     final static String WEATHER_BY_CITY_ID = "weather?id=";
     final static String WEATHER_FORECAST_BY_CITY_ID = "forecast?id=";
     //AdKraft URL's
-    public final static String ADKRAFT_BASE_URL = "http://adkraftindia.com/";
-    final static String ADKRAFT_GET_CITIES = "getCitiesData/";
-    public final static String ADKRAFT_WEATHER_IMAGES = "w_icons/";
+    public final static String API_BASE_URL = "https://api.shahoo.in/";
+    final static String API_GET_CITIES = "weathery/search_city/";
+    public final static String WEATHER_ICONS = "data/weather_icons/";
 
     //Temperature units call
     public final static String METRIC_UNIT = "&units=metric";
