@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.android.volley.VolleyError
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -28,6 +27,7 @@ import com.shahu.weathery.common.LocationSharedPreferences
 import com.shahu.weathery.common.OfflineDataSharedPreference
 import com.shahu.weathery.common.VolleyRequest
 import com.shahu.weathery.customui.CustomSearchDialog
+import com.shahu.weathery.helper.ConnectivityReceiver
 import com.shahu.weathery.helper.Locator
 import com.shahu.weathery.helper.RecyclerViewItemHelper
 import com.shahu.weathery.helper.ValuesConverter.getDayNight
@@ -40,8 +40,8 @@ import org.json.JSONArray
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainActivity : AppCompatActivity() {
-    var recyclerViewListener: IRecyclerViewListener? = null
+class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
+    private var recyclerViewListener: IRecyclerViewListener? = null
     private var mLocationSharedPreferences: LocationSharedPreferences? = null
     private var mOfflineDataSharedPreference: OfflineDataSharedPreference? = null
     private var mCityName: TextView? = null
@@ -70,42 +70,25 @@ class MainActivity : AppCompatActivity() {
         initVolleyCallback()
         mVolleyRequest = VolleyRequest(this, mIVolleyResponseCallback)
         add_new_loc_btn.visibility = View.VISIBLE
-        add_new_loc_btn.setOnClickListener(View.OnClickListener { searchForNewLocation() })
+        add_new_loc_btn.setOnClickListener { searchForNewLocation() }
         if (!setCurrentCoordinates()) {
             fetchAllData(mLocationSharedPreferences!!.allLocations)
         }
         initRecyclerView()
         initPullToRefresh()
-        if (!mIsInternetAvailable) {
-            mCardModelArrayList.clear()
-            mLocationRecyclerViewAdapter!!.clear()
-            val cardModels = mOfflineDataSharedPreference!!.offlineData
-            if (cardModels.size > 0) {
-                mCardModelArrayList.addAll(cardModels)
-            }
-        }
-    }
-
-    private fun setDisconnectStatusBar(status: Boolean) {
-        val networkStatus = findViewById<TextView>(R.id.network_status)
-        if (!status) {
-            networkStatus.visibility = View.VISIBLE
-        } else {
-            networkStatus.visibility = View.INVISIBLE
-        }
     }
 
     private fun initPullToRefresh() {
-        pullToRefresh.setOnRefreshListener(OnRefreshListener {
+        pullToRefresh.setOnRefreshListener {
             if (!setCurrentCoordinates()) {
                 fetchAllData(mLocationSharedPreferences!!.allLocations)
             }
             pullToRefresh.isRefreshing = true
-        })
+        }
     }
 
     /**
-     * Search engine from cursor.
+     * Search engine from web api.
      */
     private fun searchForNewLocation() {
         val customSearchDialog = CustomSearchDialog(this, this, ArrayList())
@@ -146,7 +129,7 @@ class MainActivity : AppCompatActivity() {
         cardModel.time = mainResponse.dt.toLong()
         cardModel.secondsShift = mainResponse.timezone
         cardModel.weatherItem = mainResponse.weather!![0]
-        cardModel.description = mainResponse.weather!![0].description!!.toUpperCase()
+        cardModel.description = mainResponse.weather!![0].description!!.toUpperCase(Locale.ROOT)
         cardModel.cityId = java.lang.String.valueOf(mainResponse.id)
         cardModel.dayNight = getDayNight(mainResponse)
         val iterator = mCardModelArrayList.iterator()
@@ -177,7 +160,7 @@ class MainActivity : AppCompatActivity() {
         cardModel.temperature = java.lang.String.valueOf(mainResponse.main!!.temp)
         cardModel.weatherItem = mainResponse.weather!![0]
         cardModel.dayNight = getDayNight(mainResponse)
-        cardModel.description = mainResponse.weather!![0].description!!.toUpperCase()
+        cardModel.description = mainResponse.weather!![0].description!!.toUpperCase(Locale.ROOT)
         val iterator = mCardModelArrayList.iterator()
         while (iterator.hasNext()) {
             if (iterator.next().cityId == cardModel.cityId) {
@@ -207,39 +190,7 @@ class MainActivity : AppCompatActivity() {
         if (mCardModelArrayList.size > 0) {
             mOfflineDataSharedPreference!!.storeData(mCardModelArrayList)
         }
-        mIsInternetAvailable = mOfflineDataSharedPreference!!.internetStatus
-        Log.d(TAG, "onPause: $mIsInternetAvailable")
-        if (mIsInternetAvailable) {
-            modifyFeatures(true)
-        } else {
-            modifyFeatures(false)
-            mCardModelArrayList.clear()
-            mLocationRecyclerViewAdapter!!.clear()
-            val cardModels = mOfflineDataSharedPreference!!.offlineData
-            if (cardModels.size > 0) {
-                mCardModelArrayList.addAll(cardModels)
-            }
-        }
         Log.d(TAG, "onPause: " + mCardModelArrayList.toTypedArray().contentToString())
-    }
-
-    private fun modifyFeatures(value: Boolean) {
-        mOfflineDataSharedPreference!!.internetStatus = value
-        pullToRefresh.isEnabled = value
-        disableAddButton(value)
-        setDisconnectStatusBar(value)
-    }
-
-    private fun disableAddButton(value: Boolean) {
-        if (value) {
-            add_new_loc_btn!!.visibility = View.VISIBLE
-        } else {
-            add_new_loc_btn!!.visibility = View.INVISIBLE
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     /**
@@ -308,8 +259,8 @@ class MainActivity : AppCompatActivity() {
      */
     private fun initRecyclerView() {
         recyclerViewListener = object : IRecyclerViewListener {
-            override fun onSingleShortClickListener(bundle: Bundle?) {
-                openDetailedView(bundle)
+            override fun onSingleShortClickListener(cityId: String?) {
+                openDetailedView(cityId)
             }
         }
         mLocationRecyclerViewAdapter = LocationRecyclerViewAdapter(mCardModelArrayList, this, recyclerViewListener)
@@ -335,19 +286,35 @@ class MainActivity : AppCompatActivity() {
         itemTouchHelper.attachToRecyclerView(locations)
     }
 
-    private fun openDetailedView(bundle: Bundle?) {
+    private fun openDetailedView(cityId: String?) {
         val intent = Intent(this, WeatherDetail::class.java)
-        if (bundle!!.getString(Constants.BUNDLE_CITY_ID) == CURRENTLOCATIONDEFAULTCITYID) {
-            bundle.putString(Constants.BUNDLE_CITY_ID, CURRENTLOCATIONCITYID)
+        val selectedCity: CardModel = if (cityId == CURRENTLOCATIONDEFAULTCITYID) {
+            getCityModelById(CURRENTLOCATIONCITYID)
+        } else {
+            getCityModelById(cityId)
         }
-        bundle.putBoolean(Constants.BUNDLE_INTERNET_AVAILABILITY, mIsInternetAvailable)
-        intent.putExtra(Constants.BUNDLE_NAME, bundle)
+        intent.putExtra(Constants.CITY_CARD_MODEL, selectedCity)
         startActivity(intent)
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
     companion object {
         private const val TAG = "MainActivity"
-        private var mIsInternetAvailable = false
+    }
+
+    private fun getCityModelById(id: String?): CardModel {
+        for (item in mCardModelArrayList) {
+            if (item.cityId == id)
+                return item
+        }
+        return CardModel()
+    }
+
+    override fun onNetworkConnectionChanged(isConnected: Boolean) {
+
+    }
+
+    override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
+
     }
 }

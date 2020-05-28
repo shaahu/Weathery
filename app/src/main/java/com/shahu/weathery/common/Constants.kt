@@ -39,13 +39,5 @@ object Constants {
     const val NIGHT = "night"
 
     //onClick bundle constants
-    const val BUNDLE_NAME = "theBundle"
-    const val BUNDLE_CITY_ID = "CITY_ID"
-    const val BUNDLE_TIME = "TIME"
-    const val BUNDLE_DAY_NIGHT = "DAY_NIGHT"
-    const val BUNDLE_TEMPERATURE = "TEMPERATURE"
-    const val BUNDLE_DESCRIPTION = "DESCRIPTION"
-    const val BUNDLE_IMAGE_URL = "IMAGE_URL"
-    const val BUNDLE_CITY_NAME = "CITY_NAME"
-    const val BUNDLE_INTERNET_AVAILABILITY = "internetAvailable"
+    const val CITY_CARD_MODEL = "the_selected_city"
 }

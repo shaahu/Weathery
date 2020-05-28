@@ -2,7 +2,6 @@ package com.shahu.weathery.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
 import com.shahu.weathery.R
 import com.shahu.weathery.adapter.LocationRecyclerViewAdapter.MyViewHolder
-import com.shahu.weathery.common.Constants
 import com.shahu.weathery.customui.CitynameTextView
 import com.shahu.weathery.helper.ImageHelper
 import com.shahu.weathery.helper.ValuesConverter.convertTemperatureToCelsius
@@ -69,18 +67,7 @@ class LocationRecyclerViewAdapter(private val mCardModelArrayList: ArrayList<Car
         var cardFlag: TextView = itemView.findViewById(R.id.card_flag)
         var cardTime: TextView = itemView.findViewById(R.id.card_time)
         override fun onClick(v: View) {
-            if (mIRecyclerViewListener != null) {
-                val bundle = Bundle()
-                bundle.putString(Constants.BUNDLE_CITY_ID, mCardModelArrayList[layoutPosition].cityId)
-                bundle.putString(Constants.BUNDLE_CITY_NAME, mCardModelArrayList[layoutPosition].name)
-                bundle.putString(Constants.BUNDLE_DAY_NIGHT, mCardModelArrayList[layoutPosition].dayNight)
-                bundle.putLong(Constants.BUNDLE_TIME, mCardModelArrayList[layoutPosition].time)
-                bundle.putString(Constants.BUNDLE_DESCRIPTION, mCardModelArrayList[layoutPosition].description)
-                bundle.putString(Constants.BUNDLE_TEMPERATURE, mCardModelArrayList[layoutPosition].temperature)
-                bundle.putString(Constants.BUNDLE_IMAGE_URL,
-                        ImageHelper.getDescriptionImageDrawable(mCardModelArrayList[layoutPosition]))
-                mIRecyclerViewListener.onSingleShortClickListener(bundle)
-            }
+            mIRecyclerViewListener?.onSingleShortClickListener(mCardModelArrayList[layoutPosition].cityId)
         }
 
         init {

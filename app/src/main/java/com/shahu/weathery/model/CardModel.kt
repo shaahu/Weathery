@@ -1,12 +1,13 @@
 package com.shahu.weathery.model
 
 import com.shahu.weathery.model.common.WeatherItem
+import java.io.Serializable
 
 /**
  * Created by Shahu Ronghe on 20, September, 2019
  * in Weathery
  */
-class CardModel {
+class CardModel : Serializable {
     var name: String? = null
     var countryCode: String? = null
     var position = 0

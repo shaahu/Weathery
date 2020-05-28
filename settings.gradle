@@ -1,2 +1,2 @@
-include ':app', ':library', ':RecyclerviewSwipeDrag'
+include ':app'
 rootProject.name='Weathery'
