@@ -29,7 +29,7 @@ class LocationSharedPreferences(private val mContext: Context?) {
     }
 
     private val availablePosition: String
-        private get() {
+        get() {
             var count = 1
             for (i in sharedPreferencesInstance!!.all.keys) {
                 if (i.equals(count.toString(), ignoreCase = true)) count++

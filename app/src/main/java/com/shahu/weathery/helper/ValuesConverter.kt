@@ -36,7 +36,7 @@ object ValuesConverter {
         val sunrise = mainResponse.sys?.sunrise?.toLong()?.let { convertUnixTime(it, secShift).hourOfDay }
         val sunset = mainResponse.sys?.sunset?.toLong()?.let { convertUnixTime(it, secShift).hourOfDay }
         val current = convertUnixTime(mainResponse.dt.toLong(), secShift).hourOfDay
-        return if (current in (sunrise!!.plus(1) ) until sunset!!) Constants.DAY else Constants.NIGHT
+        return if (current in (sunrise!!.plus(1)) until sunset!!) Constants.DAY else Constants.NIGHT
     }
 
     @JvmStatic

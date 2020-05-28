@@ -16,6 +16,7 @@ object ImageHelper {
     private const val CLOUDS_MAIN = "Clouds"
     private const val FILE_NOT_FOUND_EXP = "na"
     private var mTime: String? = null
+
     @JvmStatic
     fun getDescriptionImageDrawable(cardModel: CardModel?): String {
         val main = ObjectExtractor.extractMain(cardModel)

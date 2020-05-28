@@ -30,7 +30,7 @@ object Connectivity {
     @JvmStatic
     fun isConnected(context: Context): Boolean {
         val info = getNetworkInfo(context)
-        return info != null && info.isConnected
+        return info.isConnected
     }
 
     /**
@@ -41,7 +41,7 @@ object Connectivity {
      */
     fun isConnectedWifi(context: Context): Boolean {
         val info = getNetworkInfo(context)
-        return info != null && info.isConnected && info.type == ConnectivityManager.TYPE_WIFI
+        return info.isConnected && info.type == ConnectivityManager.TYPE_WIFI
     }
 
     /**

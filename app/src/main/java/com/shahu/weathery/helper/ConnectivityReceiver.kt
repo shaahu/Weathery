@@ -18,9 +18,9 @@ class ConnectivityReceiver : BroadcastReceiver() {
 
         if (connectivityReceiverListener != null) {
             connectivityReceiverListener!!.onNetworkConnectionChanged(
-                isConnectedOrConnecting(
-                    context
-                )
+                    isConnectedOrConnecting(
+                            context
+                    )
             )
         }
     }

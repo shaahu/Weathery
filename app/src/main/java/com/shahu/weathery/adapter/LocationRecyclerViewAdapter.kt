@@ -41,7 +41,6 @@ class LocationRecyclerViewAdapter(private val mCardModelArrayList: ArrayList<Car
         myViewHolder.cardDescription.text = mCardModelArrayList[i].description
         myViewHolder.cityId = mCardModelArrayList[i].cityId.toString()
         myViewHolder.cardFlag.text = getCountryImage(mCardModelArrayList[i].countryCode)
-        myViewHolder.cardImage.buildDrawingCache()
         if (mCardModelArrayList[i].time != 0L) {
             val time = getTimeForCity(
                     mCardModelArrayList[i].time, mCardModelArrayList[i].secondsShift)

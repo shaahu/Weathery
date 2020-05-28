@@ -41,7 +41,7 @@ class CardModel : Serializable {
         cityId = cardModel.cityId
     }
 
-    constructor() {}
+    constructor()
 
     override fun toString(): String {
         return "Position: " + position + ", Name: " + name + ", Temperature: " + temperature + ", Description:" +

@@ -11,17 +11,16 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
-import com.android.volley.VolleyError
-import com.google.gson.JsonObject
 import com.shahu.weathery.R
 import com.shahu.weathery.adapter.SearchDialogListAdapter
-import com.shahu.weathery.common.Constants.CITIES_DATA_FOR_SEARCH_LIST
-import com.shahu.weathery.common.VolleyRequest
-import com.shahu.weathery.interface2.IVolleyResponse
 import com.shahu.weathery.interface2.OnSearchItemSelection
 import com.shahu.weathery.model.CitySearchItem
+import com.shahu.weathery.retrofit.DataService
+import com.shahu.weathery.retrofit.RetrofitInstance
 import kotlinx.android.synthetic.main.search_dialog_layout.view.*
-import org.json.JSONArray
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 
 
@@ -34,44 +33,35 @@ class CustomSearchDialog(mContext: Context, private val mActivity: Activity, pri
     var adapter: SearchDialogListAdapter? = null
     var mListView: ListView? = null
     private val mDialogTitle = "Enter City Name"
-    private val mVolleyRequest: VolleyRequest
-    private var mIVolleyResponseCallback: IVolleyResponse? = null
     private var mSearchProgressBar: ProgressBar? = null
     private var mEmptyListFlag = false
-    private fun initVolleyCallback() {
-        mIVolleyResponseCallback = object : IVolleyResponse {
-            override fun onSuccessResponse(jsonObject: JsonObject?, requestType: String?) {}
-            override fun onRequestFailure(volleyError: VolleyError?, requestType: String?) {}
-            override fun onSuccessJsonArrayResponse(jsonObject: JSONArray?, requestType: String?) {}
-            override fun onStringSuccessRequest(response: String?, requestType: String?) {
-                var responseNew = response
-                if (mEmptyListFlag) {
-                    mSearchProgressBar!!.visibility = View.GONE
-                    return
-                }
-                if (requestType == CITIES_DATA_FOR_SEARCH_LIST) {
-                    mSearchProgressBar!!.visibility = View.INVISIBLE
-                    responseNew = responseNew?.replace("\n", "")
-                    responseNew = responseNew?.replace("[", "")
-                    responseNew = responseNew?.replace("]", "")
-                    var filteredValues: MutableList<CitySearchItem> = ArrayList()
-                    if (responseNew?.isEmpty()!!) {
-                        val item = CitySearchItem(0, "Not found!", "XX")
-                        filteredValues.add(item)
-                        adapter = SearchDialogListAdapter(
-                                mActivity, R.layout.items_view_layout, R.id.cityCountryRL, filteredValues)
-                        mListView!!.adapter = adapter
-                        return
-                    }
-                    filteredValues = getCitySearchItemList(responseNew)
-                    adapter = SearchDialogListAdapter(mActivity,
-                            R.layout.items_view_layout,
-                            R.id.cityCountryRL,
-                            filteredValues)
-                    mListView!!.adapter = adapter
-                }
-            }
+
+    private fun populateSearchResults(response: String?) {
+        if (mEmptyListFlag) {
+            mSearchProgressBar!!.visibility = View.GONE
+            return
         }
+        var responseNew = response
+        mSearchProgressBar!!.visibility = View.INVISIBLE
+        responseNew = responseNew?.replace("\n", "")
+        responseNew = responseNew?.replace("[", "")
+        responseNew = responseNew?.replace("]", "")
+        var filteredValues: MutableList<CitySearchItem> = ArrayList()
+        if (responseNew?.isEmpty()!!) {
+            val item = CitySearchItem(0, "Not found!", "XX")
+            filteredValues.add(item)
+            adapter = SearchDialogListAdapter(
+                    mActivity, R.layout.items_view_layout, R.id.cityCountryRL, filteredValues)
+            mListView!!.adapter = adapter
+            return
+        }
+        filteredValues = getCitySearchItemList(responseNew)
+        adapter = SearchDialogListAdapter(mActivity,
+                R.layout.items_view_layout,
+                R.id.cityCountryRL,
+                filteredValues)
+        mListView!!.adapter = adapter
+
     }
 
     private fun getCitySearchItemList(response: String): MutableList<CitySearchItem> {
@@ -150,7 +140,20 @@ class CustomSearchDialog(mContext: Context, private val mActivity: Activity, pri
             override fun afterTextChanged(editable: Editable) {
                 mListView!!.adapter = null
                 if (editable.length > 2) {
-                    mVolleyRequest.getCitiesData(searchBox.text.toString(), CITIES_DATA_FOR_SEARCH_LIST)
+                    val service: DataService = RetrofitInstance.retrofitInstance2.create(DataService::class.java)
+                    val call: Call<String> = service.searchCity(searchBox.text.toString())
+                    call.enqueue(object : Callback<String> {
+                        override fun onFailure(call: Call<String>, t: Throwable) {
+                            Log.d(TAG, call.request().url().toString())
+                            Log.e(TAG, "request onFailure", t)
+                        }
+
+                        override fun onResponse(call: Call<String>, response: Response<String>) {
+                            if (response.code() == 200)
+                                populateSearchResults(response.body())
+                        }
+                    })
+
                     view.search_progress_bar.visibility = View.VISIBLE
                 }
             }
@@ -184,11 +187,6 @@ class CustomSearchDialog(mContext: Context, private val mActivity: Activity, pri
 
     companion object {
         private const val TAG = "CustomSearchDialog"
-    }
-
-    init {
-        initVolleyCallback()
-        mVolleyRequest = VolleyRequest(mContext, mIVolleyResponseCallback)
     }
 
     fun setOnItemSelected(onItemSelected: OnSearchItemSelection?) {

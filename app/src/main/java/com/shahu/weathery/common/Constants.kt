@@ -8,14 +8,14 @@ object Constants {
     //URL's
     const val LOCATION_SHARED_PREFERENCE_NAME = "locations"
     const val OFFLINE_DATA_SHARED_PREFERENCE_NAME = "offline_data"
-    const val OPEN_WEATHER_MAP_API_KEY = "&APPID=fea2dca909cba74286a54e5b6e9abc6c"
+    const val OPEN_WEATHER_MAP_API_KEY = "fea2dca909cba74286a54e5b6e9abc6c"
     const val OPEN_WEATHER_MAP_BASE_URL = "http://api.openweathermap.org/data/2.5/"
     const val WEATHER_BY_NAME_STRING = "weather?q="
     const val WEATHER_BY_COORDS_STRING = "weather?"
     const val WEATHER_BY_CITY_ID = "weather?id="
     const val WEATHER_FORECAST_BY_CITY_ID = "forecast?id="
 
-    //AdKraft URL's
+    //shahoo URL's
     const val API_BASE_URL = "https://api.shahoo.in/"
     const val API_GET_CITIES = "weathery/search_city/"
     const val WEATHER_ICONS = "data/weather_icons/"

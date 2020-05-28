@@ -1,6 +1,5 @@
 package com.shahu.weathery
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
@@ -15,28 +14,30 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.android.volley.VolleyError
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.shahu.weathery.adapter.LocationRecyclerViewAdapter
 import com.shahu.weathery.adapter.LocationRecyclerViewAdapter.MyViewHolder
 import com.shahu.weathery.common.Constants
-import com.shahu.weathery.common.Constants.CURRENT_LOCATION_HTTP_REQUEST
-import com.shahu.weathery.common.Constants.WEATHER_BY_ID_HTTP_REQUEST
 import com.shahu.weathery.common.LocationSharedPreferences
-import com.shahu.weathery.common.OfflineDataSharedPreference
-import com.shahu.weathery.common.VolleyRequest
 import com.shahu.weathery.customui.CustomSearchDialog
 import com.shahu.weathery.helper.ConnectivityReceiver
 import com.shahu.weathery.helper.Locator
 import com.shahu.weathery.helper.RecyclerViewItemHelper
 import com.shahu.weathery.helper.ValuesConverter.getDayNight
-import com.shahu.weathery.interface2.*
+import com.shahu.weathery.interface2.IRecyclerViewListener
+import com.shahu.weathery.interface2.OnDragListener
+import com.shahu.weathery.interface2.OnSearchItemSelection
+import com.shahu.weathery.interface2.OnSwipeListener
 import com.shahu.weathery.model.CardModel
 import com.shahu.weathery.model.common.MainResponse
+import com.shahu.weathery.retrofit.DataService
+import com.shahu.weathery.retrofit.RetrofitInstance
 import kotlinx.android.synthetic.main.activity_main.*
 import net.danlew.android.joda.JodaTimeAndroid
-import org.json.JSONArray
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -46,8 +47,6 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     private var mOfflineDataSharedPreference: OfflineDataSharedPreference? = null
     private var mCityName: TextView? = null
     private val mCardModelArrayList = ArrayList<CardModel>()
-    private var mVolleyRequest: VolleyRequest? = null
-    private var mIVolleyResponseCallback: IVolleyResponse? = null
     private var mLocationRecyclerViewAdapter: LocationRecyclerViewAdapter? = null
     private var CURRENTLOCATIONCITYID: String? = null
     private val CURRENTLOCATIONDEFAULTCITYID = "001"
@@ -67,8 +66,6 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         JodaTimeAndroid.init(this)
         mCityName = findViewById(R.id.main_city_name)
         initSharedPref()
-        initVolleyCallback()
-        mVolleyRequest = VolleyRequest(this, mIVolleyResponseCallback)
         add_new_loc_btn.visibility = View.VISIBLE
         add_new_loc_btn.setOnClickListener { searchForNewLocation() }
         if (!setCurrentCoordinates()) {
@@ -96,7 +93,25 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
         customSearchDialog.setOnItemSelected(object : OnSearchItemSelection {
             override fun onClick(cityId: String?) {
-                if (mLocationSharedPreferences!!.addNewLocation(cityId)) mVolleyRequest!!.getWeatherByCityId(cityId!!, WEATHER_BY_ID_HTTP_REQUEST) else Toast.makeText(this@MainActivity, "Already Exist", Toast.LENGTH_SHORT).show()
+                if (mLocationSharedPreferences!!.addNewLocation(cityId)) {
+                    val service: DataService = RetrofitInstance.retrofitInstance.create(DataService::class.java)
+                    val call: Call<JsonObject> =
+                            service.getWeatherByCityId(cityId,
+                                    Constants.OPEN_WEATHER_MAP_API_KEY)
+                    call.enqueue(object : Callback<JsonObject> {
+                        override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                            Log.e(TAG, "request onFailure", t)
+                        }
+
+                        override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                            if (response.code() == 200)
+                                addFavouriteCityWeather(response.body())
+                        }
+
+                    })
+                } else {
+                    Toast.makeText(this@MainActivity, "Already Exist", Toast.LENGTH_SHORT).show()
+                }
             }
         })
     }
@@ -179,18 +194,24 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
      */
     private fun fetchAllData(allLocations: Map<String, *>) {
         Log.d(TAG, "fetchAllData: $allLocations")
+        val service: DataService = RetrofitInstance.retrofitInstance.create(DataService::class.java)
         for ((_, value) in allLocations) {
-            mVolleyRequest!!.getWeatherByCityId(value.toString(), WEATHER_BY_ID_HTTP_REQUEST)
+            val call: Call<JsonObject> =
+                    service.getWeatherByCityId(value.toString(),
+                            Constants.OPEN_WEATHER_MAP_API_KEY)
+            call.enqueue(object : Callback<JsonObject> {
+                override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                    Log.e(TAG, "request onFailure", t)
+                }
+
+                override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                    if (response.code() == 200)
+                        addFavouriteCityWeather(response.body())
+                }
+
+            })
         }
         Handler().postDelayed({ pullToRefresh.isRefreshing = false }, 2000)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        if (mCardModelArrayList.size > 0) {
-            mOfflineDataSharedPreference!!.storeData(mCardModelArrayList)
-        }
-        Log.d(TAG, "onPause: " + mCardModelArrayList.toTypedArray().contentToString())
     }
 
     /**
@@ -220,10 +241,27 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         locationHelper.getLocation(Locator.Method.NETWORK_THEN_GPS, object : Locator.Listener {
             override fun onLocationFound(location: Location?) {
                 retValue[0] = true
-                mVolleyRequest!!.getWeatherByCoords(CURRENT_LOCATION_HTTP_REQUEST, location!!.longitude, location.latitude)
+                val service: DataService = RetrofitInstance.retrofitInstance.create(DataService::class.java)
+                val call: Call<JsonObject> =
+                        service.getWeatherByLocation(location?.latitude.toString(),
+                                location?.longitude.toString(),
+                                Constants.OPEN_WEATHER_MAP_API_KEY)
+
+                call.enqueue(object : Callback<JsonObject> {
+                    override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                        Log.d(TAG, "onResponse: " + response.body().toString())
+                        if (response.code() == 200) {
+                            addCurrentLocationData(response.body())
+                            fetchAllData(mLocationSharedPreferences!!.allLocations)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                        Log.e(TAG, "request onFailure", t)
+                    }
+                })
             }
 
-            @SuppressLint("SetTextI18n")
             override fun onLocationNotFound() {
                 mCityName!!.text = "Location not found!"
                 fetchAllData(mLocationSharedPreferences!!.allLocations)
@@ -231,27 +269,6 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             }
         })
         return retValue[0]
-    }
-
-    /**
-     * Method for initializing the volleycalls.
-     */
-    private fun initVolleyCallback() {
-        mIVolleyResponseCallback = object : IVolleyResponse {
-            override fun onSuccessResponse(jsonObject: JsonObject?, requestType: String?) {
-                when (requestType) {
-                    CURRENT_LOCATION_HTTP_REQUEST -> {
-                        addCurrentLocationData(jsonObject)
-                        fetchAllData(mLocationSharedPreferences!!.allLocations)
-                    }
-                    WEATHER_BY_ID_HTTP_REQUEST -> addFavouriteCityWeather(jsonObject)
-                }
-            }
-
-            override fun onRequestFailure(volleyError: VolleyError?, requestType: String?) {}
-            override fun onSuccessJsonArrayResponse(jsonObject: JSONArray?, requestType: String?) {}
-            override fun onStringSuccessRequest(response: String?, requestType: String?) {}
-        }
     }
 
     /**
