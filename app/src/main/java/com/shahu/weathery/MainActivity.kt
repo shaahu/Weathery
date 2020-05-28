@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,7 +15,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.android.volley.VolleyError
 import com.google.gson.Gson
@@ -30,7 +28,6 @@ import com.shahu.weathery.common.LocationSharedPreferences
 import com.shahu.weathery.common.OfflineDataSharedPreference
 import com.shahu.weathery.common.VolleyRequest
 import com.shahu.weathery.customui.CustomSearchDialog
-import com.shahu.weathery.customui.TextHolderSubstanceCaps
 import com.shahu.weathery.helper.Locator
 import com.shahu.weathery.helper.RecyclerViewItemHelper
 import com.shahu.weathery.helper.ValuesConverter.getDayNight
@@ -113,11 +110,12 @@ class MainActivity : AppCompatActivity() {
     private fun searchForNewLocation() {
         val customSearchDialog = CustomSearchDialog(this, this, ArrayList())
         customSearchDialog.show()
-        customSearchDialog.onItemSelected = object : OnSearchItemSelection {
+
+        customSearchDialog.setOnItemSelected(object : OnSearchItemSelection {
             override fun onClick(cityId: String?) {
                 if (mLocationSharedPreferences!!.addNewLocation(cityId)) mVolleyRequest!!.getWeatherByCityId(cityId!!, WEATHER_BY_ID_HTTP_REQUEST) else Toast.makeText(this@MainActivity, "Already Exist", Toast.LENGTH_SHORT).show()
             }
-        }
+        })
     }
 
     /**

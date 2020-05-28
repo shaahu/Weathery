@@ -24,17 +24,15 @@ import kotlinx.android.synthetic.main.search_dialog_layout.view.*
 import org.json.JSONArray
 import java.util.*
 
+
 /**
  * Created by Shahu Ronghe on 26, November, 2019
  * in Weathery
  */
-class CustomSearchDialog(var mContext: Context, private val mActivity: Activity, private val mCitySearchItemsList: MutableList<CitySearchItem>) {
-    lateinit var onItemSelected: OnSearchItemSelection
-    var mOnSearchItemSelection: OnSearchItemSelection? = null
-    var mCountrySearchSingleItem: CitySearchItem? = null
+class CustomSearchDialog(mContext: Context, private val mActivity: Activity, private val mCitySearchItemsList: MutableList<CitySearchItem>) {
+    private var mOnSearchItemSelection: OnSearchItemSelection? = null
     var adapter: SearchDialogListAdapter? = null
     var mListView: ListView? = null
-    private val mPosition = 0
     private val mDialogTitle = "Enter City Name"
     private val mVolleyRequest: VolleyRequest
     private var mIVolleyResponseCallback: IVolleyResponse? = null
@@ -66,8 +64,10 @@ class CustomSearchDialog(var mContext: Context, private val mActivity: Activity,
                         return
                     }
                     filteredValues = getCitySearchItemList(responseNew)
-                    adapter = SearchDialogListAdapter(
-                            mActivity, R.layout.items_view_layout, R.id.cityCountryRL, filteredValues)
+                    adapter = SearchDialogListAdapter(mActivity,
+                            R.layout.items_view_layout,
+                            R.id.cityCountryRL,
+                            filteredValues)
                     mListView!!.adapter = adapter
                 }
             }
@@ -98,7 +98,8 @@ class CustomSearchDialog(var mContext: Context, private val mActivity: Activity,
 
     private fun checkForDuplicate(returnList: List<CitySearchItem>, citySearchItem: CitySearchItem): Boolean {
         for (item in returnList) {
-            if (item.cityName == citySearchItem.cityName && item.countryCode == citySearchItem.countryCode) return true
+            if (item.cityName == citySearchItem.cityName && item.countryCode == citySearchItem.countryCode)
+                return true
         }
         return false
     }
@@ -119,7 +120,7 @@ class CustomSearchDialog(var mContext: Context, private val mActivity: Activity,
         adapter = SearchDialogListAdapter(mActivity, R.layout.items_view_layout, R.id.cityCountryRL, mCitySearchItemsList)
         mListView!!.adapter = adapter
         adb.setView(view)
-        var mAlertDialog: AlertDialog? = null
+        val mAlertDialog: AlertDialog?
         mAlertDialog = adb.create()
         mAlertDialog.setCancelable(false)
         val searchGoBtn = view.findViewById<TextView>(R.id.search_go_btn)
@@ -131,7 +132,7 @@ class CustomSearchDialog(var mContext: Context, private val mActivity: Activity,
             try {
                 mOnSearchItemSelection!!.onClick(id.toString())
             } catch (e: Exception) {
-                Log.e(TAG, e.message)
+                Log.e(TAG, "exception in click: ", e)
             }
             mAlertDialog.dismiss()
         }
@@ -188,5 +189,9 @@ class CustomSearchDialog(var mContext: Context, private val mActivity: Activity,
     init {
         initVolleyCallback()
         mVolleyRequest = VolleyRequest(mContext, mIVolleyResponseCallback)
+    }
+
+    fun setOnItemSelected(onItemSelected: OnSearchItemSelection?) {
+        mOnSearchItemSelection = onItemSelected
     }
 }

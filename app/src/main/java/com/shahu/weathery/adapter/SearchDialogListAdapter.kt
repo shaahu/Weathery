@@ -6,17 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import com.shahu.weathery.R
 import com.shahu.weathery.helper.ValuesConverter.getCountryImage
 import com.shahu.weathery.model.CitySearchItem
-import kotlinx.android.synthetic.main.items_view_layout.view.*
+
 
 /**
  * Created by Shahu Ronghe on 27, November, 2019
  * in Weathery
  */
 open class SearchDialogListAdapter(context: Context, resource: Int,
-                              textviewResourceID: Int,
-                              searchListItems: List<CitySearchItem>) :
+                                   textviewResourceID: Int,
+                                   searchListItems: List<CitySearchItem>) :
         ArrayAdapter<CitySearchItem>(context, resource, textviewResourceID, searchListItems) {
 
     var resource: Int
@@ -30,26 +31,16 @@ open class SearchDialogListAdapter(context: Context, resource: Int,
     }
 
 
-
     override fun getView(i: Int, convertView: View?, viewGroup: ViewGroup): View? {
-        var holder: ViewHolder
-        var retView: View
-
-        if(convertView == null) {
-            retView = vi.inflate(resource, null)
-            holder = ViewHolder()
-
-            holder.city?.text = list[i].cityName
-            holder.city?.tag = list[i].id
-            val countryCode = list[i].countryCode
-            if (countryCode != "XX") holder.country?.text = getCountryImage(countryCode)
-        }
-
-        else {
-            retView = convertView
-        }
-
-        return retView
+        val inflater = LayoutInflater.from(context)
+        val rowView = inflater.inflate(R.layout.items_view_layout, null, true)
+        val city = rowView.findViewById(R.id.city) as TextView
+        val country = rowView.findViewById(R.id.country) as TextView
+        city.text = list[i].cityName
+        city.tag = list[i].id
+        val countryCode = list[i].countryCode
+        if (countryCode != "XX") country.text = getCountryImage(countryCode)
+        return rowView
     }
 
     override fun getCount(): Int {
@@ -67,10 +58,4 @@ open class SearchDialogListAdapter(context: Context, resource: Int,
     companion object {
         var TAG = "SearchDialogListAdapter"
     }
-
-    internal class ViewHolder {
-        var city: TextView? = null
-        var country : TextView? =null
-    }
-
 }
