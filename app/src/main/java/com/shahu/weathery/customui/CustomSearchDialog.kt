@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -15,6 +16,7 @@ import com.shahu.weathery.R
 import com.shahu.weathery.adapter.SearchDialogListAdapter
 import com.shahu.weathery.interface2.OnSearchItemSelection
 import com.shahu.weathery.model.CitySearchItem
+import com.shahu.weathery.model.citysearch.CitySearchResultResponse
 import com.shahu.weathery.retrofit.DataService
 import com.shahu.weathery.retrofit.RetrofitInstance
 import kotlinx.android.synthetic.main.search_dialog_layout.view.*
@@ -36,18 +38,14 @@ class CustomSearchDialog(private val mContext: Context, private val mActivity: A
     private var mSearchProgressBar: ProgressBar? = null
     private var mEmptyListFlag = false
 
-    private fun populateSearchResults(response: String?) {
+    private fun populateSearchResults(response: CitySearchResultResponse?) {
         if (mEmptyListFlag) {
             mSearchProgressBar!!.visibility = View.GONE
             return
         }
-        var responseNew = response
         mSearchProgressBar!!.visibility = View.INVISIBLE
-        responseNew = responseNew?.replace("\n", "")
-        responseNew = responseNew?.replace("[", "")
-        responseNew = responseNew?.replace("]", "")
         var filteredValues: MutableList<CitySearchItem> = ArrayList()
-        if (responseNew?.isEmpty()!!) {
+        if (response?.isEmpty()!!) {
             val item = CitySearchItem(0, "Not found!", "XX")
             filteredValues.add(item)
             adapter = SearchDialogListAdapter(
@@ -55,7 +53,7 @@ class CustomSearchDialog(private val mContext: Context, private val mActivity: A
             mListView!!.adapter = adapter
             return
         }
-        filteredValues = getCitySearchItemList(responseNew)
+        filteredValues = getCitySearchItemList(response)
         adapter = SearchDialogListAdapter(mActivity,
                 R.layout.items_view_layout,
                 R.id.cityCountryRL,
@@ -64,22 +62,13 @@ class CustomSearchDialog(private val mContext: Context, private val mActivity: A
 
     }
 
-    private fun getCitySearchItemList(response: String): MutableList<CitySearchItem> {
-        var response = response
+    private fun getCitySearchItemList(response: CitySearchResultResponse?): MutableList<CitySearchItem> {
         val returnList: MutableList<CitySearchItem> = ArrayList()
-        response = response.replace("\'", "")
-        val items = response.split(", ").toTypedArray()
-        for (stringLine in items) {
-            val splitString = stringLine.split("#").toTypedArray()
-            if (splitString.isNotEmpty()) {
-                if (splitString[1] != "") {
-                    val cityName = splitString[0]
-                    val id = splitString[1].toInt()
-                    val countryCode = splitString[2]
-                    val citySearchItem = CitySearchItem(id, cityName, countryCode)
-                    if (!checkForDuplicate(returnList, citySearchItem)) {
-                        returnList.add(citySearchItem)
-                    }
+        if (response != null) {
+            for (item in response) {
+                val citySearchItem = CitySearchItem(item.id, item.name, item.country)
+                if (!checkForDuplicate(returnList, citySearchItem)) {
+                    returnList.add(citySearchItem)
                 }
             }
         }
@@ -127,6 +116,7 @@ class CustomSearchDialog(private val mContext: Context, private val mActivity: A
             mAlertDialog.dismiss()
         }
         searchBox.addTextChangedListener(object : TextWatcher {
+            var lastChange: Long = 0
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
                 if (charSequence.length <= 2) {
@@ -140,20 +130,12 @@ class CustomSearchDialog(private val mContext: Context, private val mActivity: A
             override fun afterTextChanged(editable: Editable) {
                 mListView!!.adapter = null
                 if (editable.length > 2) {
-                    val service: DataService = RetrofitInstance(mContext).retrofitInstance2.create(DataService::class.java)
-                    val call: Call<String> = service.searchCity(searchBox.text.toString())
-                    call.enqueue(object : Callback<String> {
-                        override fun onFailure(call: Call<String>, t: Throwable) {
-                            Log.d(TAG, call.request().url().toString())
-                            Log.e(TAG, "request onFailure", t)
+                    Handler().postDelayed({
+                        if (System.currentTimeMillis() - lastChange >= 300) {
+                            sendSearchCityRequest(searchBox.text.toString())
                         }
-
-                        override fun onResponse(call: Call<String>, response: Response<String>) {
-                            if (response.code() == 200)
-                                populateSearchResults(response.body())
-                        }
-                    })
-
+                    }, 300)
+                    lastChange = System.currentTimeMillis()
                     view.search_progress_bar.visibility = View.VISIBLE
                 }
             }
@@ -165,6 +147,24 @@ class CustomSearchDialog(private val mContext: Context, private val mActivity: A
                 mAlertDialog.dismiss()
             }
             true
+        })
+    }
+
+    private fun sendSearchCityRequest(name: String) {
+        val service: DataService =
+                RetrofitInstance(mContext).retrofitInstance2.create(DataService::class.java)
+        val call: Call<CitySearchResultResponse> = service.searchCity(name)
+        call.enqueue(object : Callback<CitySearchResultResponse> {
+            override fun onFailure(call: Call<CitySearchResultResponse>, t: Throwable) {
+                Log.d(TAG, call.request().url().toString())
+                Log.e(TAG, "request onFailure", t)
+            }
+
+            override fun onResponse(call: Call<CitySearchResultResponse>,
+                                    response: Response<CitySearchResultResponse>) {
+                if (response.code() == 200)
+                    populateSearchResults(response.body())
+            }
         })
     }
 

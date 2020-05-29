@@ -30,7 +30,7 @@ import com.shahu.weathery.interface2.OnDragListener
 import com.shahu.weathery.interface2.OnSearchItemSelection
 import com.shahu.weathery.interface2.OnSwipeListener
 import com.shahu.weathery.model.CardModel
-import com.shahu.weathery.model.common.MainResponse
+import com.shahu.weathery.model.main.MainResponse
 import com.shahu.weathery.retrofit.DataService
 import com.shahu.weathery.retrofit.RetrofitInstance
 import kotlinx.android.synthetic.main.activity_main.*

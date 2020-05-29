@@ -5,7 +5,6 @@ import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 
 
 /**
@@ -36,7 +35,7 @@ class RetrofitInstance(context: Context) {
         get() {
             return Retrofit.Builder()
                     .baseUrl(SHAHOO_API_BASE_URL)
-                    .addConverterFactory(ScalarsConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create())
                     .build()
         }
 }

@@ -2,7 +2,7 @@ package com.shahu.weathery.helper
 
 import android.annotation.SuppressLint
 import com.shahu.weathery.common.Constants
-import com.shahu.weathery.model.common.MainResponse
+import com.shahu.weathery.model.main.MainResponse
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat

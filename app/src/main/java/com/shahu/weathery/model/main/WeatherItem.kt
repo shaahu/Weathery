@@ -1,4 +1,4 @@
-package com.shahu.weathery.model.common
+package com.shahu.weathery.model.main
 
 import com.google.gson.annotations.SerializedName
 import javax.annotation.Generated

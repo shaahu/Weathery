@@ -2,7 +2,7 @@ package com.shahu.weathery.model
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.shahu.weathery.model.common.WeatherItem
+import com.shahu.weathery.model.main.WeatherItem
 
 /**
  * Created by Shahu Ronghe on 20, September, 2019
