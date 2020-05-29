@@ -28,7 +28,7 @@ import java.util.*
  * Created by Shahu Ronghe on 26, November, 2019
  * in Weathery
  */
-class CustomSearchDialog(mContext: Context, private val mActivity: Activity, private val mCitySearchItemsList: MutableList<CitySearchItem>) {
+class CustomSearchDialog(private val mContext: Context, private val mActivity: Activity, private val mCitySearchItemsList: MutableList<CitySearchItem>) {
     private var mOnSearchItemSelection: OnSearchItemSelection? = null
     var adapter: SearchDialogListAdapter? = null
     var mListView: ListView? = null
@@ -140,7 +140,7 @@ class CustomSearchDialog(mContext: Context, private val mActivity: Activity, pri
             override fun afterTextChanged(editable: Editable) {
                 mListView!!.adapter = null
                 if (editable.length > 2) {
-                    val service: DataService = RetrofitInstance.retrofitInstance2.create(DataService::class.java)
+                    val service: DataService = RetrofitInstance(mContext).retrofitInstance2.create(DataService::class.java)
                     val call: Call<String> = service.searchCity(searchBox.text.toString())
                     call.enqueue(object : Callback<String> {
                         override fun onFailure(call: Call<String>, t: Throwable) {

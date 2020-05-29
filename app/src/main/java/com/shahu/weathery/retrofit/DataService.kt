@@ -20,6 +20,10 @@ interface DataService {
     fun getWeatherByCityId(@Query("id") cityId: String?,
                            @Query("APPID") appid: String?): Call<JsonObject>
 
+    @GET("/data/2.5/forecast")
+    fun getForecast(@Query("id") cityId: String?,
+                    @Query("APPID") appid: String?): Call<JsonObject>
+
 
     @GET("/weathery/search_city/{name}")
     fun searchCity(@Path("name") name: String?): Call<String>

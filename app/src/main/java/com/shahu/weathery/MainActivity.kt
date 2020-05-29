@@ -44,7 +44,6 @@ import java.util.*
 class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
     private var recyclerViewListener: IRecyclerViewListener? = null
     private var mLocationSharedPreferences: LocationSharedPreferences? = null
-    private var mOfflineDataSharedPreference: OfflineDataSharedPreference? = null
     private var mCityName: TextView? = null
     private val mCardModelArrayList = ArrayList<CardModel>()
     private var mLocationRecyclerViewAdapter: LocationRecyclerViewAdapter? = null
@@ -65,7 +64,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode())
         JodaTimeAndroid.init(this)
         mCityName = findViewById(R.id.main_city_name)
-        initSharedPref()
+        mLocationSharedPreferences = LocationSharedPreferences(this)
         add_new_loc_btn.visibility = View.VISIBLE
         add_new_loc_btn.setOnClickListener { searchForNewLocation() }
         if (!setCurrentCoordinates()) {
@@ -90,11 +89,10 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     private fun searchForNewLocation() {
         val customSearchDialog = CustomSearchDialog(this, this, ArrayList())
         customSearchDialog.show()
-
         customSearchDialog.setOnItemSelected(object : OnSearchItemSelection {
             override fun onClick(cityId: String?) {
                 if (mLocationSharedPreferences!!.addNewLocation(cityId)) {
-                    val service: DataService = RetrofitInstance.retrofitInstance.create(DataService::class.java)
+                    val service: DataService = RetrofitInstance(applicationContext).retrofitInstance.create(DataService::class.java)
                     val call: Call<JsonObject> =
                             service.getWeatherByCityId(cityId,
                                     Constants.OPEN_WEATHER_MAP_API_KEY)
@@ -114,14 +112,6 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                 }
             }
         })
-    }
-
-    /**
-     * Method to initialize the sharedPreference.
-     */
-    private fun initSharedPref() {
-        mLocationSharedPreferences = LocationSharedPreferences(this)
-        mOfflineDataSharedPreference = OfflineDataSharedPreference(this)
     }
 
     /**
@@ -194,7 +184,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
      */
     private fun fetchAllData(allLocations: Map<String, *>) {
         Log.d(TAG, "fetchAllData: $allLocations")
-        val service: DataService = RetrofitInstance.retrofitInstance.create(DataService::class.java)
+        val service: DataService = RetrofitInstance(applicationContext).retrofitInstance.create(DataService::class.java)
         for ((_, value) in allLocations) {
             val call: Call<JsonObject> =
                     service.getWeatherByCityId(value.toString(),
@@ -202,16 +192,16 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             call.enqueue(object : Callback<JsonObject> {
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                     Log.e(TAG, "request onFailure", t)
+                    Handler().postDelayed({ pullToRefresh.isRefreshing = false }, 2000)
                 }
 
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                    Handler().postDelayed({ pullToRefresh.isRefreshing = false }, 2000)
                     if (response.code() == 200)
                         addFavouriteCityWeather(response.body())
                 }
-
             })
         }
-        Handler().postDelayed({ pullToRefresh.isRefreshing = false }, 2000)
     }
 
     /**
@@ -241,7 +231,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         locationHelper.getLocation(Locator.Method.NETWORK_THEN_GPS, object : Locator.Listener {
             override fun onLocationFound(location: Location?) {
                 retValue[0] = true
-                val service: DataService = RetrofitInstance.retrofitInstance.create(DataService::class.java)
+                val service: DataService = RetrofitInstance(applicationContext).retrofitInstance.create(DataService::class.java)
                 val call: Call<JsonObject> =
                         service.getWeatherByLocation(location?.latitude.toString(),
                                 location?.longitude.toString(),
@@ -254,10 +244,12 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                             addCurrentLocationData(response.body())
                             fetchAllData(mLocationSharedPreferences!!.allLocations)
                         }
+                        Handler().postDelayed({ pullToRefresh.isRefreshing = false }, 2000)
                     }
 
                     override fun onFailure(call: Call<JsonObject>, t: Throwable) {
                         Log.e(TAG, "request onFailure", t)
+                        Handler().postDelayed({ pullToRefresh.isRefreshing = false }, 2000)
                     }
                 })
             }
@@ -277,7 +269,15 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     private fun initRecyclerView() {
         recyclerViewListener = object : IRecyclerViewListener {
             override fun onSingleShortClickListener(cityId: String?) {
-                openDetailedView(cityId)
+                val intent = Intent(applicationContext, WeatherDetail::class.java)
+                val selectedCity: CardModel = if (cityId == CURRENTLOCATIONDEFAULTCITYID) {
+                    getCityModelById(CURRENTLOCATIONCITYID)
+                } else {
+                    getCityModelById(cityId)
+                }
+                intent.putExtra(Constants.CITY_CARD_MODEL, selectedCity)
+                startActivity(intent)
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             }
         }
         mLocationRecyclerViewAdapter = LocationRecyclerViewAdapter(mCardModelArrayList, this, recyclerViewListener)
@@ -301,18 +301,6 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         }
         val itemTouchHelper = ItemTouchHelper(touchHelper)
         itemTouchHelper.attachToRecyclerView(locations)
-    }
-
-    private fun openDetailedView(cityId: String?) {
-        val intent = Intent(this, WeatherDetail::class.java)
-        val selectedCity: CardModel = if (cityId == CURRENTLOCATIONDEFAULTCITYID) {
-            getCityModelById(CURRENTLOCATIONCITYID)
-        } else {
-            getCityModelById(cityId)
-        }
-        intent.putExtra(Constants.CITY_CARD_MODEL, selectedCity)
-        startActivity(intent)
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
     companion object {
