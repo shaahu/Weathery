@@ -41,7 +41,7 @@ class LocationRecyclerViewAdapter(private val mCardModelArrayList: ArrayList<Car
         val iconUrl = ImageHelper.getDescriptionImageDrawable(mCardModelArrayList[i])
         Glide.with(mContext).load(iconUrl).error(R.drawable.default_weather_icon).into(myViewHolder.cardImage)
         myViewHolder.cardTemperature.text = mCardModelArrayList[i].temperature?.let { convertTemperatureToCelsius(it) } + "\u00B0C"
-        myViewHolder.mCardDescription.text = mCardModelArrayList[i].description
+        myViewHolder.mCardDescription.text = mCardModelArrayList[i].description?.toUpperCase(Locale.ROOT)
         myViewHolder.cityId = mCardModelArrayList[i].cityId.toString()
         myViewHolder.cardFlag.text = getCountryImage(mCardModelArrayList[i].countryCode)
         if (mCardModelArrayList[i].time != 0L) {

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".WeatherDetail">
 
     <LinearLayout
@@ -15,29 +16,116 @@
             android:layout_height="25dp" />
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <com.shahu.weathery.customui.TextHolderRegular
+                android:id="@+id/main_city_name"
                 android:layout_width="match_parent"
+                android:text="--"
                 android:layout_height="wrap_content"
-                android:text="Melbourne"
                 android:textAlignment="center"
                 android:textSize="36sp" />
 
             <com.shahu.weathery.customui.TextHolderThin
-                android:textAlignment="center"
-                android:text="Clear"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <com.shahu.weathery.customui.TextHolderRegular
+                android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="11&#xb0;"
                 android:textAlignment="center"
-                android:textSize="36sp" />
+                android:textSize="20sp" />
+
+            <com.shahu.weathery.customui.TextHolderRegular
+                android:id="@+id/temperature"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="72sp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20sp"
+                android:layout_marginTop="20dp">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <com.shahu.weathery.customui.TextHolderRegular
+                        android:id="@+id/current_day"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center"
+                        android:text="Saturday"
+                        android:textAlignment="center"
+                        android:textSize="24sp" />
+
+                    <com.shahu.weathery.customui.TextHolderSemiBold
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/current_day"
+                        android:gravity="center"
+                        android:text="TODAY"
+                        android:textAlignment="center"
+                        android:textSize="20sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true">
+
+                    <com.shahu.weathery.customui.TextHolderRegular
+                        android:id="@+id/current_max"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="25dp"
+                        android:gravity="center"
+                        android:letterSpacing="0.1"
+                        android:textAlignment="center"
+                        android:textSize="24sp" />
+
+                    <com.shahu.weathery.customui.TextHolderRegular
+                        android:id="@+id/current_min"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/current_max"
+                        android:gravity="center"
+                        android:letterSpacing="0.1"
+                        android:textAlignment="center"
+                        android:textSize="24sp" />
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:background="@android:color/darker_gray" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/hour_forecast_recycler_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </HorizontalScrollView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:background="@android:color/darker_gray" />
+
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

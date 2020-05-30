@@ -32,5 +32,6 @@ class TextHolderItalics : AppCompatTextView {
     private fun init() {
         val typeface = ResourcesCompat.getFont(mContext, R.font.hg_italics)
         this.typeface = typeface
+        this.setTextColor(context.resources.getColor(R.color.black))
     }
 }

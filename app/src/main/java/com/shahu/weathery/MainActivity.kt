@@ -5,7 +5,6 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -38,7 +37,6 @@ import net.danlew.android.joda.JodaTimeAndroid
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
@@ -125,6 +123,10 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             cityName = cityName.substring(0, 16) + "..."
         }
         cardModel.name = cityName
+        cardModel.lon = mainResponse.coord?.lon.toString()
+        cardModel.lat = mainResponse.coord?.lat.toString()
+        cardModel.max = mainResponse.main?.tempMax.toString()
+        cardModel.min = mainResponse.main?.tempMin.toString()
         cardModel.countryCode = mainResponse.sys!!.country
         cardModel.position = mLocationSharedPreferences!!.getPositionByCityId(java.lang.String.valueOf(mainResponse.id))!!.toInt()
         cardModel.temperature = java.lang.String.valueOf(mainResponse.main!!.temp)
@@ -157,12 +159,14 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         cardModel.name = "Current Location"
         cardModel.countryCode = mainResponse.sys!!.country
         cardModel.position = 0
+        cardModel.lon = mainResponse.coord?.lon.toString()
+        cardModel.lat = mainResponse.coord?.lat.toString()
         cardModel.cityId = CURRENTLOCATIONDEFAULTCITYID
         CURRENTLOCATIONCITYID = java.lang.String.valueOf(mainResponse.id)
         cardModel.temperature = java.lang.String.valueOf(mainResponse.main!!.temp)
         cardModel.weatherItem = mainResponse.weather!![0]
         cardModel.dayNight = getDayNight(mainResponse)
-        cardModel.description = mainResponse.weather!![0].description!!.toUpperCase(Locale.ROOT)
+        cardModel.description = mainResponse.weather!![0].description
         val iterator = mCardModelArrayList.iterator()
         while (iterator.hasNext()) {
             if (iterator.next().cityId == cardModel.cityId) {

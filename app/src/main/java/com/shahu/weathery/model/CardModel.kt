@@ -21,6 +21,8 @@ class CardModel() : Parcelable {
     var secondsShift = 0
     var lon: String? = null
     var lat: String? = null
+    var min: String? = null
+    var max: String? = null
 
     constructor(parcel: Parcel) : this() {
         name = parcel.readString()
@@ -34,6 +36,8 @@ class CardModel() : Parcelable {
         secondsShift = parcel.readInt()
         lon = parcel.readString()
         lat = parcel.readString()
+        min = parcel.readString()
+        max = parcel.readString()
     }
 
 
@@ -54,6 +58,8 @@ class CardModel() : Parcelable {
         parcel.writeInt(secondsShift)
         parcel.writeString(lon)
         parcel.writeString(lat)
+        parcel.writeString(min)
+        parcel.writeString(max)
     }
 
     override fun describeContents(): Int {

@@ -91,7 +91,7 @@ class CustomSearchDialog(private val mContext: Context, private val mActivity: A
         val adb = AlertDialog.Builder(mActivity)
         val view = mActivity.layoutInflater.inflate(R.layout.search_dialog_layout, null)
         val rippleViewClose = view.findViewById<View>(R.id.close) as TextView
-        val title = view.findViewById<View>(R.id.spinerTitle) as TextView
+        val title = view.findViewById<View>(R.id.dialogTitle) as TextView
         title.text = mDialogTitle
         mListView = view.findViewById<View>(R.id.list) as ListView
         mSearchProgressBar = view.findViewById(R.id.search_progress_bar)
