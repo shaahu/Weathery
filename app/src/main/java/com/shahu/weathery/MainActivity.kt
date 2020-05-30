@@ -53,7 +53,6 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initialization()
-        setDateTime()
     }
 
     /**
@@ -61,11 +60,9 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
      */
     private fun initialization() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.getDefaultNightMode())
         JodaTimeAndroid.init(this)
         mCityName = findViewById(R.id.main_city_name)
         mLocationSharedPreferences = LocationSharedPreferences(this)
-        add_new_loc_btn.visibility = View.VISIBLE
         add_new_loc_btn.setOnClickListener { searchForNewLocation() }
         if (!setCurrentCoordinates()) {
             fetchAllData(mLocationSharedPreferences!!.allLocations)
@@ -202,23 +199,6 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                 }
             })
         }
-    }
-
-    /**
-     * Method to set date/time continuously.
-     */
-    private fun setDateTime() {
-        val someHandler = Handler(mainLooper)
-        someHandler.postDelayed(object : Runnable {
-            override fun run() {
-                val calendar = Calendar.getInstance()
-                val dateFormat = SimpleDateFormat("EEEE, dd MMM", Locale.ENGLISH)
-                val timeFormat = SimpleDateFormat("hh:mm aaa", Locale.ENGLISH)
-                main_date.text = dateFormat.format(calendar.time)
-                main_time.text = timeFormat.format(calendar.time)
-                someHandler.postDelayed(this, 10000)
-            }
-        }, 10)
     }
 
     /**

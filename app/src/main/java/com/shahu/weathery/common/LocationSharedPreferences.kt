@@ -11,7 +11,7 @@ import java.util.*
  * in Weathery
  */
 class LocationSharedPreferences(private val mContext: Context?) {
-    var sharedPreferencesInstance: SharedPreferences? = null
+    private var sharedPreferencesInstance: SharedPreferences? = null
         private set
 
     private fun init() {
@@ -75,15 +75,15 @@ class LocationSharedPreferences(private val mContext: Context?) {
         Log.d(TAG, "improveKeys: NewKeys: " + sharedPreferencesInstance!!.all.keys.toString())
     }
 
-    private fun getValueByPosition(pos: Int): String {
-        return sharedPreferencesInstance!!.getString(pos.toString(), null)
+    private fun getValueByPosition(pos: Int): String? {
+        return sharedPreferencesInstance!!.getString(pos.toString(), "0")
     }
 
     private fun removeKey(pos: Int) {
         sharedPreferencesInstance!!.edit().remove(pos.toString()).apply()
     }
 
-    private fun addKeyValues(pos: Int, value: String) {
+    private fun addKeyValues(pos: Int, value: String?) {
         sharedPreferencesInstance!!.edit().putString(pos.toString(), value).apply()
     }
 

@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="100"
+    android:background="@color/white"
     tools:context="com.shahu.weathery.MainActivity">
 
     <TextView
@@ -18,73 +19,45 @@
         android:letterSpacing="0.1"
         android:textSize="16sp" />
 
+    <ImageView
+        android:id="@+id/add_new_loc_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:scaleX="0.5"
+        android:scaleY="0.5"
+        android:src="@drawable/ic_plus" />
     <TextView
         android:id="@+id/network_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:background="@color/chocolate"
         android:fontFamily="@font/montserrat_regular"
         android:gravity="center"
-        android:text="No internet connection"
         android:letterSpacing="0.1"
-        android:visibility="invisible"
-        android:background="@color/chocolate"
-        android:textSize="16sp" />
+        android:text="No internet connection"
+        android:textSize="16sp"
+        android:visibility="invisible" />
 
-    <RelativeLayout
-        android:id="@+id/date_time_RL"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/add_new_loc_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="20dp"
-            android:layout_toStartOf="@id/main_time"
-            android:contentDescription="@string/add_new_location_button"
-            android:scaleX="0.75"
-            android:scaleY="0.75"
-            android:src="@drawable/ic_plus"
-            android:visibility="invisible" />
-
-        <com.shahu.weathery.customui.TextHolderSubstanceCaps
-            android:id="@+id/main_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
-            android:fontFamily="@font/substance_light"
-            android:textAlignment="center"
-            android:textSize="20sp" />
-
-        <com.shahu.weathery.customui.TextHolderSubstanceCaps
-            android:id="@+id/main_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/main_date"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:layout_marginBottom="10dp"
-            android:fontFamily="@font/substance_light"
-            android:textAlignment="center"
-            android:textSize="20sp" />
-
-    </RelativeLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_marginTop="15sp"
         android:id="@+id/pullToRefresh"
-        android:layout_below="@id/date_time_RL"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:layout_below="@id/main_city_name">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/locations"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_centerHorizontal="true" />
+
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
 </RelativeLayout>

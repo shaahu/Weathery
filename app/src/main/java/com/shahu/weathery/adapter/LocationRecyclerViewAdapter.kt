@@ -13,7 +13,10 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
 import com.shahu.weathery.R
 import com.shahu.weathery.adapter.LocationRecyclerViewAdapter.MyViewHolder
-import com.shahu.weathery.customui.CitynameTextView
+import com.shahu.weathery.customui.TextHolderBook
+import com.shahu.weathery.customui.TextHolderItalics
+import com.shahu.weathery.customui.TextHolderRegular
+import com.shahu.weathery.customui.TextHolderThin
 import com.shahu.weathery.helper.ImageHelper
 import com.shahu.weathery.helper.ValuesConverter.convertTemperatureToCelsius
 import com.shahu.weathery.helper.ValuesConverter.getCountryImage
@@ -34,11 +37,11 @@ class LocationRecyclerViewAdapter(private val mCardModelArrayList: ArrayList<Car
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(myViewHolder: MyViewHolder, i: Int) {
-        myViewHolder.cardName.text = mCardModelArrayList[i].name?.toUpperCase(Locale.ROOT)
+        myViewHolder.mCardName.text = mCardModelArrayList[i].name
         val iconUrl = ImageHelper.getDescriptionImageDrawable(mCardModelArrayList[i])
         Glide.with(mContext).load(iconUrl).error(R.drawable.default_weather_icon).into(myViewHolder.cardImage)
         myViewHolder.cardTemperature.text = mCardModelArrayList[i].temperature?.let { convertTemperatureToCelsius(it) } + "\u00B0C"
-        myViewHolder.cardDescription.text = mCardModelArrayList[i].description
+        myViewHolder.mCardDescription.text = mCardModelArrayList[i].description
         myViewHolder.cityId = mCardModelArrayList[i].cityId.toString()
         myViewHolder.cardFlag.text = getCountryImage(mCardModelArrayList[i].countryCode)
         if (mCardModelArrayList[i].time != 0L) {
@@ -59,12 +62,12 @@ class LocationRecyclerViewAdapter(private val mCardModelArrayList: ArrayList<Car
     inner class MyViewHolder internal constructor(itemView: View) : ViewHolder(itemView), View.OnClickListener {
         lateinit var cityId: String
         private var mainRelativeLayout: RelativeLayout = itemView.findViewById(R.id.card_main_RL)
-        var cardName: CitynameTextView = itemView.findViewById(R.id.card_name)
-        var cardTemperature: TextView = itemView.findViewById(R.id.card_temperature)
-        var cardDescription: TextView = itemView.findViewById(R.id.card_desc)
+        var mCardName: TextHolderRegular = itemView.findViewById(R.id.card_name)
+        var cardTemperature: TextHolderThin = itemView.findViewById(R.id.card_temperature)
+        var mCardDescription: TextHolderBook = itemView.findViewById(R.id.card_desc)
         var cardImage: ImageView = itemView.findViewById(R.id.card_image)
         var cardFlag: TextView = itemView.findViewById(R.id.card_flag)
-        var cardTime: TextView = itemView.findViewById(R.id.card_time)
+        var cardTime: TextHolderItalics = itemView.findViewById(R.id.card_time)
         override fun onClick(v: View) {
             mIRecyclerViewListener?.onSingleShortClickListener(mCardModelArrayList[layoutPosition].cityId)
         }

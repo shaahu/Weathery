@@ -10,7 +10,7 @@ import com.shahu.weathery.R
  * Created by Shahu Ronghe on 30, December, 2019
  * in Weathery
  */
-class TextHolderSubstanceCaps : AppCompatTextView {
+class TextHolderThin : AppCompatTextView {
     var mContext: Context
 
     constructor(context: Context) : super(context) {
@@ -29,9 +29,7 @@ class TextHolderSubstanceCaps : AppCompatTextView {
     }
 
     private fun init() {
-        val typeface = ResourcesCompat.getFont(mContext, R.font.substance_light)
+        val typeface = ResourcesCompat.getFont(mContext, R.font.hg_light)
         this.typeface = typeface
-        this.isAllCaps = true
-        this.textSize = 20f
     }
 }

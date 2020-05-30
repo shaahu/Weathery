@@ -7,10 +7,10 @@ import androidx.core.content.res.ResourcesCompat
 import com.shahu.weathery.R
 
 /**
- * Created by Shahu Ronghe on 04, December, 2019
+ * Created by Shahu Ronghe on 30, December, 2019
  * in Weathery
  */
-class CitynameTextView : AppCompatTextView {
+class TextHolderBook : AppCompatTextView {
     var mContext: Context
 
     constructor(context: Context) : super(context) {
@@ -29,7 +29,7 @@ class CitynameTextView : AppCompatTextView {
     }
 
     private fun init() {
-        var typeface = ResourcesCompat.getFont(mContext, R.font.lato_black)
+        val typeface = ResourcesCompat.getFont(mContext, R.font.hg_book)
         this.typeface = typeface
     }
 }

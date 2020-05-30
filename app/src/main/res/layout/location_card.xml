@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="10dp"
-    android:layout_marginVertical="10dp"
+    android:layout_marginVertical="2dp"
     android:background="@drawable/rounded_rectangle">
 
     <RelativeLayout
@@ -20,40 +20,38 @@
             android:layout_height="120dp"
             android:layout_centerVertical="true" />
 
-        <TextView
+        <com.shahu.weathery.customui.TextHolderThin
             android:id="@+id/card_temperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
             android:layout_toEndOf="@id/card_image"
-            android:fontFamily="@font/lato_thin"
             android:gravity="center"
             android:textAlignment="center"
             android:textSize="60sp" />
 
     </RelativeLayout>
 
-    <TextView
+    <com.shahu.weathery.customui.TextHolderBook
         android:id="@+id/card_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/card_ll"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="5dp"
-        android:fontFamily="@font/montserrat_regular"
         android:letterSpacing="0.3"
         android:textAlignment="center" />
 
-    <TextView
+    <com.shahu.weathery.customui.TextHolderItalics
         android:id="@+id/card_time"
-        android:fontFamily="@font/roboto_italic"
-        android:textSize="12sp"
-        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true"
+        android:textSize="12sp" />
 
-    <com.shahu.weathery.customui.CitynameTextView
+    <com.shahu.weathery.customui.TextHolderRegular
         android:id="@+id/card_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

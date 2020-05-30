@@ -49,13 +49,13 @@ class CustomSearchDialog(private val mContext: Context, private val mActivity: A
             val item = CitySearchItem(0, "Not found!", "XX")
             filteredValues.add(item)
             adapter = SearchDialogListAdapter(
-                    mActivity, R.layout.items_view_layout, R.id.cityCountryRL, filteredValues)
+                    mActivity, R.layout.item_search_city, R.id.cityCountryRL, filteredValues)
             mListView!!.adapter = adapter
             return
         }
         filteredValues = getCitySearchItemList(response)
         adapter = SearchDialogListAdapter(mActivity,
-                R.layout.items_view_layout,
+                R.layout.item_search_city,
                 R.id.cityCountryRL,
                 filteredValues)
         mListView!!.adapter = adapter
@@ -96,7 +96,7 @@ class CustomSearchDialog(private val mContext: Context, private val mActivity: A
         mListView = view.findViewById<View>(R.id.list) as ListView
         mSearchProgressBar = view.findViewById(R.id.search_progress_bar)
         val searchBox = view.findViewById<View>(R.id.searchBox) as EditText
-        adapter = SearchDialogListAdapter(mActivity, R.layout.items_view_layout, R.id.cityCountryRL, mCitySearchItemsList)
+        adapter = SearchDialogListAdapter(mActivity, R.layout.item_search_city, R.id.cityCountryRL, mCitySearchItemsList)
         mListView!!.adapter = adapter
         adb.setView(view)
         val mAlertDialog: AlertDialog?

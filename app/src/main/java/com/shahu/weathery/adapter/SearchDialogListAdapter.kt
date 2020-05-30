@@ -33,7 +33,7 @@ open class SearchDialogListAdapter(context: Context, resource: Int,
 
     override fun getView(i: Int, convertView: View?, viewGroup: ViewGroup): View? {
         val inflater = LayoutInflater.from(context)
-        val rowView = inflater.inflate(R.layout.items_view_layout, null, true)
+        val rowView = inflater.inflate(R.layout.item_search_city, null, true)
         val city = rowView.findViewById(R.id.city) as TextView
         val country = rowView.findViewById(R.id.country) as TextView
         city.text = list[i].cityName

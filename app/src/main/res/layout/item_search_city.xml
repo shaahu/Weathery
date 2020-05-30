@@ -4,14 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <com.shahu.weathery.customui.TextHolderRegular
         android:id="@+id/city"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center|start"
         android:padding="13dp"
         android:textAlignment="gravity"
-        android:textSize="14sp" />
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/country"
