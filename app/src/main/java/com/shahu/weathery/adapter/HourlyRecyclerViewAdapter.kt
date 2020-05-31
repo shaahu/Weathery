@@ -27,7 +27,7 @@ class HourlyRecyclerViewAdapter(private val mHourlyList: ArrayList<HourlyModel>,
 
     override fun onBindViewHolder(myViewHolder: MyViewHolder, i: Int) {
         val hourly = mHourlyList[i]
-        myViewHolder.hour.text = hourly.hour
+        myViewHolder.hour.text = hourly.value
         myViewHolder.temperature.text = hourly.temperature + "°"
 
         if (hourly.mainDescription == "inva") {

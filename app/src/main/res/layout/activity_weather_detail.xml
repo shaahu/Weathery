@@ -87,9 +87,9 @@
                         android:gravity="center"
                         android:letterSpacing="0.1"
                         android:textAlignment="center"
-                        android:textSize="24sp" />
+                        android:textSize="22sp" />
 
-                    <com.shahu.weathery.customui.TextHolderRegular
+                    <com.shahu.weathery.customui.TextHolderRegularGreyout
                         android:id="@+id/current_min"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -98,7 +98,7 @@
                         android:gravity="center"
                         android:letterSpacing="0.1"
                         android:textAlignment="center"
-                        android:textSize="24sp" />
+                        android:textSize="22sp" />
                 </RelativeLayout>
 
             </RelativeLayout>
@@ -122,10 +122,11 @@
                 android:background="@android:color/darker_gray" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="20sp"
                 android:id="@+id/daily_forecast_recycler_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:orientation="vertical" />
 
             <View
