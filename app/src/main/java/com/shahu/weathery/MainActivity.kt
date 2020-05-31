@@ -40,13 +40,13 @@ import retrofit2.Response
 import java.util.*
 
 class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener {
-    private var recyclerViewListener: IRecyclerViewListener? = null
+    private var mRecyclerViewListener: IRecyclerViewListener? = null
     private var mLocationSharedPreferences: LocationSharedPreferences? = null
     private var mCityName: TextView? = null
     private val mCardModelArrayList = ArrayList<CardModel>()
     private var mLocationRecyclerViewAdapter: LocationRecyclerViewAdapter? = null
-    private var CURRENTLOCATIONCITYID: String? = null
-    private val CURRENTLOCATIONDEFAULTCITYID = "001"
+    private var mCurrentLocationCityId: String? = null
+    private val mCurrentLocationDefaultCityId = "001"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -128,14 +128,19 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         cardModel.max = mainResponse.main?.tempMax.toString()
         cardModel.min = mainResponse.main?.tempMin.toString()
         cardModel.countryCode = mainResponse.sys!!.country
-        cardModel.position = mLocationSharedPreferences!!.getPositionByCityId(java.lang.String.valueOf(mainResponse.id))!!.toInt()
+        cardModel.position =
+                mLocationSharedPreferences!!.getPositionByCityId(java.lang.String.valueOf(mainResponse.id))!!.toInt()
         cardModel.temperature = java.lang.String.valueOf(mainResponse.main!!.temp)
         cardModel.time = mainResponse.dt.toLong()
         cardModel.secondsShift = mainResponse.timezone
         cardModel.weatherItem = mainResponse.weather!![0]
         cardModel.description = mainResponse.weather!![0].description!!.toUpperCase(Locale.ROOT)
         cardModel.cityId = java.lang.String.valueOf(mainResponse.id)
-        cardModel.dayNight = getDayNight(mainResponse)
+        cardModel.dayNight =
+                getDayNight(mainResponse.timezone,
+                        mainResponse.sys!!.sunrise,
+                        mainResponse.sys!!.sunset,
+                        mainResponse.dt)
         val iterator = mCardModelArrayList.iterator()
         while (iterator.hasNext()) {
             if (iterator.next().cityId == cardModel.cityId) {
@@ -161,11 +166,14 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         cardModel.position = 0
         cardModel.lon = mainResponse.coord?.lon.toString()
         cardModel.lat = mainResponse.coord?.lat.toString()
-        cardModel.cityId = CURRENTLOCATIONDEFAULTCITYID
-        CURRENTLOCATIONCITYID = java.lang.String.valueOf(mainResponse.id)
+        cardModel.cityId = mCurrentLocationDefaultCityId
+        mCurrentLocationCityId = java.lang.String.valueOf(mainResponse.id)
         cardModel.temperature = java.lang.String.valueOf(mainResponse.main!!.temp)
         cardModel.weatherItem = mainResponse.weather!![0]
-        cardModel.dayNight = getDayNight(mainResponse)
+        cardModel.dayNight = getDayNight(mainResponse.timezone,
+                mainResponse.sys!!.sunrise,
+                mainResponse.sys!!.sunset,
+                mainResponse.dt)
         cardModel.description = mainResponse.weather!![0].description
         val iterator = mCardModelArrayList.iterator()
         while (iterator.hasNext()) {
@@ -251,38 +259,42 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
      * initialize the recycler view.
      */
     private fun initRecyclerView() {
-        recyclerViewListener = object : IRecyclerViewListener {
+        mRecyclerViewListener = object : IRecyclerViewListener {
             override fun onSingleShortClickListener(cityId: String?) {
                 val intent = Intent(applicationContext, WeatherDetail::class.java)
-                val selectedCity: CardModel = if (cityId == CURRENTLOCATIONDEFAULTCITYID) {
-                    getCityModelById(CURRENTLOCATIONCITYID)
-                } else {
-                    getCityModelById(cityId)
-                }
+                val selectedCity: CardModel = getCityModelById(cityId)
                 intent.putExtra(Constants.CITY_CARD_MODEL, selectedCity)
                 startActivity(intent)
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             }
         }
-        mLocationRecyclerViewAdapter = LocationRecyclerViewAdapter(mCardModelArrayList, this, recyclerViewListener)
+
+        mLocationRecyclerViewAdapter =
+                LocationRecyclerViewAdapter(mCardModelArrayList, this, mRecyclerViewListener)
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
         locations.layoutManager = layoutManager
         locations.adapter = mLocationRecyclerViewAdapter
-        val touchHelper = RecyclerViewItemHelper<CardModel>(mCardModelArrayList, mLocationRecyclerViewAdapter as RecyclerView.Adapter<*>?)
+
+        val touchHelper =
+                RecyclerViewItemHelper<CardModel>(mCardModelArrayList,
+                        mLocationRecyclerViewAdapter as RecyclerView.Adapter<*>?)
         touchHelper.setRecyclerItemDragEnabled(true).onDragItemListener = object : OnDragListener {
             override fun onDragItemListener(fromPosition: Int, toPosition: Int) {
                 Log.d(TAG, "onDragItemListener: from: $fromPosition, to: $toPosition")
                 mLocationSharedPreferences!!.updatePosition(fromPosition, toPosition)
             }
         }
+
         touchHelper.setRecyclerItemSwipeEnabled(true).onSwipeItemListener = object : OnSwipeListener {
             override fun onSwipeItemListener(oldPosition: ViewHolder?) {
                 val myViewHolder = oldPosition as MyViewHolder?
                 if (myViewHolder != null) {
-                    Log.d(TAG, "onSwipeItemListener: remove location: " + mLocationSharedPreferences!!.removeLocation(myViewHolder.cityId))
+                    Log.d(TAG, "onSwipeItemListener: remove location: " +
+                            mLocationSharedPreferences!!.removeLocation(myViewHolder.cityId))
                 }
             }
         }
+
         val itemTouchHelper = ItemTouchHelper(touchHelper)
         itemTouchHelper.attachToRecyclerView(locations)
     }

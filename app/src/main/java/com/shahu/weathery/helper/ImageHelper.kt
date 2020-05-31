@@ -1,7 +1,6 @@
 package com.shahu.weathery.helper
 
 import com.shahu.weathery.common.Constants
-import com.shahu.weathery.model.CardModel
 
 /**
  * Created by Shahu Ronghe on 23, September, 2019
@@ -18,19 +17,17 @@ object ImageHelper {
     private var mTime: String? = null
 
     @JvmStatic
-    fun getDescriptionImageDrawable(cardModel: CardModel?): String {
-        val main = ObjectExtractor.extractMain(cardModel)
-        val desc = ObjectExtractor.extractDescription(cardModel)
-        mTime = ObjectExtractor.extractTime(cardModel)
-        return when (main) {
+    fun getDescriptionImageDrawable(mainDesc: String, description: String, timeOfDay: String?): String {
+        mTime = timeOfDay
+        return when (mainDesc) {
             FILE_NOT_FOUND_EXP -> buildImagePath("default_weather_icon")
             CLEAR_MAIN -> clearDescription
-            CLOUDS_MAIN -> getCloudDescription(desc)
-            SNOW_MAIN -> getSnowDescription(desc)
-            THUNDERSTORM_MAIN -> getThunderstormDescription(desc)
+            CLOUDS_MAIN -> getCloudDescription(description)
+            SNOW_MAIN -> getSnowDescription(description)
+            THUNDERSTORM_MAIN -> getThunderstormDescription(description)
             DRIZZLE_MAIN -> drizzleDescription
-            RAIN_MAIN -> getRainDescription(desc)
-            else -> getAtmosphereDescription(main)
+            RAIN_MAIN -> getRainDescription(description)
+            else -> getAtmosphereDescription(mainDesc)
         }
     }
 

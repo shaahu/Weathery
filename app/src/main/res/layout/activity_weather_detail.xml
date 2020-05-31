@@ -23,8 +23,8 @@
             <com.shahu.weathery.customui.TextHolderRegular
                 android:id="@+id/main_city_name"
                 android:layout_width="match_parent"
-                android:text="--"
                 android:layout_height="wrap_content"
+                android:text="--"
                 android:textAlignment="center"
                 android:textSize="36sp" />
 
@@ -59,7 +59,6 @@
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="10dp"
                         android:gravity="center"
-                        android:text="Saturday"
                         android:textAlignment="center"
                         android:textSize="24sp" />
 
@@ -110,20 +109,28 @@
                 android:layout_marginTop="10dp"
                 android:background="@android:color/darker_gray" />
 
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/hour_forecast_recycler_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </HorizontalScrollView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/hour_forecast_recycler_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
+
+            <androidx.recyclerview.widget.RecyclerView
                 android:layout_marginTop="10dp"
+                android:id="@+id/daily_forecast_recycler_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
                 android:background="@android:color/darker_gray" />
 
         </LinearLayout>

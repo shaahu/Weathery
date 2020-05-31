@@ -2,7 +2,6 @@ package com.shahu.weathery.helper
 
 import android.annotation.SuppressLint
 import com.shahu.weathery.common.Constants
-import com.shahu.weathery.model.main.MainResponse
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
@@ -31,12 +30,11 @@ object ValuesConverter {
         return dateTime
     }
 
-    fun getDayNight(mainResponse: MainResponse): String {
-        val secShift = mainResponse.timezone
-        val sunrise = mainResponse.sys?.sunrise?.toLong()?.let { convertUnixTime(it, secShift).hourOfDay }
-        val sunset = mainResponse.sys?.sunset?.toLong()?.let { convertUnixTime(it, secShift).hourOfDay }
-        val current = convertUnixTime(mainResponse.dt.toLong(), secShift).hourOfDay
-        return if (current in (sunrise!!.plus(1)) until sunset!!) Constants.DAY else Constants.NIGHT
+    fun getDayNight(timezone: Int, sunriseTime: Int, sunsetTime: Int, dtIncoming: Int): String {
+        val sunrise = sunriseTime.toLong().let { convertUnixTime(it, timezone).hourOfDay }
+        val sunset = sunsetTime.toLong().let { convertUnixTime(it, timezone).hourOfDay }
+        val current = convertUnixTime(dtIncoming.toLong(), timezone).hourOfDay
+        return if (current in (sunrise.plus(1)) until sunset) Constants.DAY else Constants.NIGHT
     }
 
     @JvmStatic
@@ -71,6 +69,18 @@ object ValuesConverter {
     fun getTimeOnlyForCity(currentTime: Long, timezone: Int): String {
         val dateTime = convertUnixTime(currentTime, timezone)
         val dateTimeFormatter = DateTimeFormat.forPattern("HH:mm")
+        return dateTimeFormatter.print(dateTime)
+    }
+
+    fun getHourOfTheDayByEpoch(time: Long, timezone: Int): String? {
+        val dateTime = convertUnixTime(time, timezone)
+        val dateTimeFormatter = DateTimeFormat.forPattern("HH")
+        return dateTimeFormatter.print(dateTime)
+    }
+
+    fun getDayOfTheWeek(time: Int, timezone: Int): String? {
+        val dateTime = convertUnixTime(time.toLong(), timezone)
+        val dateTimeFormatter = DateTimeFormat.forPattern("EEEE")
         return dateTimeFormatter.print(dateTime)
     }
 }

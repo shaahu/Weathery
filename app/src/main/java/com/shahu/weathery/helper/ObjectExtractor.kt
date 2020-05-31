@@ -7,7 +7,7 @@ import com.shahu.weathery.model.CardModel
  * in Weathery
  */
 internal object ObjectExtractor {
-    const val EMPTY = ""
+    private const val EMPTY = ""
     fun extractMain(cardModel: CardModel?): String {
         if (cardModel == null) {
             return EMPTY
