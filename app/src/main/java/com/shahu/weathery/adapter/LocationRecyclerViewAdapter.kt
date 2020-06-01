@@ -37,20 +37,28 @@ class LocationRecyclerViewAdapter(private val mCardModelArrayList: ArrayList<Car
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(myViewHolder: MyViewHolder, i: Int) {
-        myViewHolder.mCardName.text = mCardModelArrayList[i].name
+        val cardModel = mCardModelArrayList[i]
+        myViewHolder.mCardName.text = cardModel.name
         val iconUrl =
-                mCardModelArrayList[i].weatherItem?.main?.let { mCardModelArrayList[i].weatherItem?.description?.let { it1 -> ImageHelper.getDescriptionImageDrawable(it, it1,mCardModelArrayList[i].dayNight) }
-        }
+                cardModel.weatherItem?.main?.let {
+                    cardModel.weatherItem?.description?.let { it1 -> ImageHelper.getDescriptionImageDrawable(it, it1, cardModel.dayNight) }
+                }
         Glide.with(mContext).load(iconUrl).error(R.drawable.default_weather_icon).into(myViewHolder.cardImage)
         myViewHolder.cardTemperature.text =
-                mCardModelArrayList[i].temperature?.let { convertTemperatureToCelsius(it) } + "\u00B0C"
-        myViewHolder.mCardDescription.text = mCardModelArrayList[i].description?.toUpperCase(Locale.ROOT)
-        myViewHolder.cityId = mCardModelArrayList[i].cityId.toString()
-        myViewHolder.cardFlag.text = getCountryImage(mCardModelArrayList[i].countryCode)
-        if (mCardModelArrayList[i].time != 0L) {
+                cardModel.temperature?.let { convertTemperatureToCelsius(it) } + "\u00B0C"
+        myViewHolder.mCardDescription.text = cardModel.description?.toUpperCase(Locale.ROOT)
+        myViewHolder.cityId = cardModel.cityId.toString()
+        myViewHolder.cardFlag.text = getCountryImage(cardModel.countryCode)
+        if (cardModel.time != 0L) {
             val time = getTimeForCity(
-                    mCardModelArrayList[i].time, mCardModelArrayList[i].secondsShift)
+                    cardModel.time, cardModel.secondsShift)
             myViewHolder.cardTime.text = time
+        }
+
+        if (cardModel.position == 0) {
+            myViewHolder.locArrow.visibility = View.VISIBLE
+        } else {
+            myViewHolder.locArrow.visibility = View.GONE
         }
     }
 
@@ -69,6 +77,7 @@ class LocationRecyclerViewAdapter(private val mCardModelArrayList: ArrayList<Car
         var cardTemperature: TextHolderThin = itemView.findViewById(R.id.card_temperature)
         var mCardDescription: TextHolderBook = itemView.findViewById(R.id.card_desc)
         var cardImage: ImageView = itemView.findViewById(R.id.card_image)
+        var locArrow: ImageView = itemView.findViewById(R.id.location_arrow)
         var cardFlag: TextView = itemView.findViewById(R.id.card_flag)
         var cardTime: TextHolderItalics = itemView.findViewById(R.id.card_time)
         override fun onClick(v: View) {

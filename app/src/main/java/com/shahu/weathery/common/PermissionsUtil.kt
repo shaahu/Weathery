@@ -30,7 +30,7 @@ object PermissionsUtil {
         // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(
                         context,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        Manifest.permission.ACCESS_FINE_LOCATION
                 )
                 != PackageManager.PERMISSION_GRANTED
         ) {
@@ -39,7 +39,7 @@ object PermissionsUtil {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(
                             activity,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            Manifest.permission.ACCESS_FINE_LOCATION
                     )
             ) {
                 // Show an explanation to the user *asynchronously* -- don't block
@@ -50,8 +50,8 @@ object PermissionsUtil {
                 ActivityCompat.requestPermissions(
                         activity,
                         arrayOf(
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                Manifest.permission.READ_EXTERNAL_STORAGE
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.ACCESS_COARSE_LOCATION
                         ),
                         11
                 )

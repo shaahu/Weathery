@@ -145,7 +145,8 @@ class WeatherDetail : AppCompatActivity() {
 
         humidityTV.text = oneCallResponse.current.humidity.toString() + "%"
 
-        windTV.text = oneCallResponse.current.wind_speed.toString()
+        val dir = getWindDirection(oneCallResponse.current.wind_deg)
+        windTV.text = dir+" "+oneCallResponse.current.wind_speed.toString()+" km/hr"
 
         feelsLikeTV.text = convertTemperatureToCelsius(oneCallResponse.current.feels_like.toString()) + "°"
 
@@ -154,6 +155,12 @@ class WeatherDetail : AppCompatActivity() {
         uvIndexTV.text = oneCallResponse.current.uvi.toString()
 
         bottom_layout.visibility = View.VISIBLE
+    }
+
+    private fun getWindDirection(windDeg: Int): String {
+        val deg =((windDeg/22.5)+.5)
+        val arr= arrayOf("N","NNE","NE","ENE","E","ESE", "SE", "SSE","S","SSW","SW","WSW","W","WNW","NW","NNW")
+       return arr[((deg % 16).toInt())]
     }
 
     companion object {

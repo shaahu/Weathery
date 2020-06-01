@@ -1,6 +1,7 @@
 package com.shahu.weathery
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
@@ -20,6 +21,7 @@ import com.shahu.weathery.adapter.LocationRecyclerViewAdapter
 import com.shahu.weathery.adapter.LocationRecyclerViewAdapter.MyViewHolder
 import com.shahu.weathery.common.Constants
 import com.shahu.weathery.common.LocationSharedPreferences
+import com.shahu.weathery.common.PermissionsUtil
 import com.shahu.weathery.customui.CustomSearchDialog
 import com.shahu.weathery.helper.ConnectivityReceiver
 import com.shahu.weathery.helper.Locator
@@ -60,6 +62,8 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     private fun initialization() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         JodaTimeAndroid.init(this)
+        if (!PermissionsUtil.checkPermissions(this))
+            PermissionsUtil.askPermissions(this, this)
         mCityName = findViewById(R.id.main_city_name)
         mLocationSharedPreferences = LocationSharedPreferences(this)
         add_new_loc_btn.setOnClickListener { searchForNewLocation() }
@@ -319,5 +323,25 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
     override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
 
+    }
+
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<out String>,
+            grantResults: IntArray
+    ) {
+        when (requestCode) {
+            11 -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    setCurrentCoordinates()
+                }else{
+                    fetchAllData(mLocationSharedPreferences!!.allLocations)
+                }
+                return
+            }
+
+            else -> {
+            }
+        }
     }
 }
