@@ -2,6 +2,7 @@ package com.shahu.weathery
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -63,6 +64,7 @@ class WeatherDetail : AppCompatActivity() {
         description.text = oneCallResponse?.current!!.weather[0].description
         temperature.text = oneCallResponse.current.temp?.let { convertTemperatureToCelsius(it.toString()) } + "°"
         current_day.text = getDayOfTheWeek(oneCallResponse.current.dt, oneCallResponse.timezone_offset)
+        current_day.visibility = View.VISIBLE
         current_max.text = mCityData.max?.let { convertTemperatureToCelsius(it) }
         current_min.text = mCityData.min?.let { convertTemperatureToCelsius(it) }
         populateHourlyData(oneCallResponse.hourly,
@@ -71,6 +73,8 @@ class WeatherDetail : AppCompatActivity() {
                 oneCallResponse.timezone_offset)
 
         populateDailyData(oneCallResponse.daily, oneCallResponse.timezone_offset)
+
+        populateBottomData(oneCallResponse)
     }
 
     private fun populateHourlyData(hourly: List<Hourly>?, sunrise: Int?, sunset: Int?, timezoneOffset: Int?) {
@@ -128,6 +132,28 @@ class WeatherDetail : AppCompatActivity() {
                 LinearLayoutManager(this)
         daily_forecast_recycler_view.layoutManager = layoutManager
         daily_forecast_recycler_view.adapter = dailyRecyclerViewAdapter
+    }
+
+    private fun populateBottomData(oneCallResponse: OneCallResponse) {
+        sunriseTV.text =
+                getTimeOnlyForCity(oneCallResponse.current.sunrise.toLong(), oneCallResponse.timezone_offset)
+
+        sunsetTV.text =
+                getTimeOnlyForCity(oneCallResponse.current.sunset.toLong(), oneCallResponse.timezone_offset)
+
+        cloudTV.text = oneCallResponse.current.clouds.toString() + "%"
+
+        humidityTV.text = oneCallResponse.current.humidity.toString() + "%"
+
+        windTV.text = oneCallResponse.current.wind_speed.toString()
+
+        feelsLikeTV.text = convertTemperatureToCelsius(oneCallResponse.current.feels_like.toString()) + "°"
+
+        pressureTV.text = oneCallResponse.current.pressure.toString() + " hPa"
+
+        uvIndexTV.text = oneCallResponse.current.uvi.toString()
+
+        bottom_layout.visibility = View.VISIBLE
     }
 
     companion object {
