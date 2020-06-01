@@ -5,6 +5,7 @@ import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -161,7 +162,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         val gson = Gson()
         val mainResponse = gson.fromJson(jsonObject.toString(), MainResponse::class.java)
         val cardModel = CardModel()
-        cardModel.name = "Current Location"
+        cardModel.name = mainResponse.name
         cardModel.countryCode = mainResponse.sys!!.country
         cardModel.position = 0
         cardModel.lon = mainResponse.coord?.lon.toString()
@@ -183,7 +184,6 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
         }
         mCardModelArrayList.add(cardModel)
         mLocationRecyclerViewAdapter!!.notifyDataSetChanged()
-        mCityName!!.text = String.format("%s, %s", mainResponse.name, mainResponse.sys!!.country)
     }
 
     /**
@@ -211,6 +211,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                 }
             })
         }
+        add_new_loc_btn.visibility = View.VISIBLE
     }
 
     /**
@@ -237,6 +238,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
                             fetchAllData(mLocationSharedPreferences!!.allLocations)
                         }
                         Handler().postDelayed({ pullToRefresh.isRefreshing = false }, 2000)
+
                     }
 
                     override fun onFailure(call: Call<JsonObject>, t: Throwable) {

@@ -1,9 +1,5 @@
 <resources>
     <string name="app_name">Weathery</string>
-    <string name="add_new_location_button">add new location button</string>
-    <string name="pressure">pressure</string>
-    <string name="humidity">humidity</string>
-    <string name="cloudiness">Cloudiness</string>
-    <string name="search_hint"><font size="12">Type atleast 3 characters to start search</font></string>
+    <string name="search_hint"></string>
 
 </resources>

@@ -57,7 +57,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:letterSpacing="0.1"
         android:textSize="28sp" />
 
     <TextView
