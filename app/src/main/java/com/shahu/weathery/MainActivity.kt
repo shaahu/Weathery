@@ -3,10 +3,13 @@ package com.shahu.weathery
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -62,10 +65,12 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
     private fun initialization() {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         JodaTimeAndroid.init(this)
+        val w: Window = window // in Activity's onCreate() for instance
+        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        mLocationSharedPreferences = LocationSharedPreferences(this)
         if (!PermissionsUtil.checkPermissions(this))
             PermissionsUtil.askPermissions(this, this)
         mCityName = findViewById(R.id.main_city_name)
-        mLocationSharedPreferences = LocationSharedPreferences(this)
         add_new_loc_btn.setOnClickListener { searchForNewLocation() }
         if (!setCurrentCoordinates()) {
             fetchAllData(mLocationSharedPreferences!!.allLocations)

@@ -3,6 +3,8 @@ package com.shahu.weathery
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,6 +41,8 @@ class WeatherDetail : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weather_detail)
+        val w: Window = window // in Activity's onCreate() for instance
+        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         mCityData = intent.getParcelableExtra(Constants.CITY_CARD_MODEL)
         mLat = mCityData.lat
         mLon = mCityData.lon
@@ -108,7 +112,8 @@ class WeatherDetail : AppCompatActivity() {
             if (mHourlyList.size == 26)
                 break
         }
-        Log.d(TAG, "final list: ${mHourlyList.toArray()}")
+
+        mHourlyList.get(0).value = "Now"
 
         hourlyRecyclerViewAdapter =
                 HourlyRecyclerViewAdapter(mHourlyList, this)

@@ -15,347 +15,356 @@
             android:layout_width="match_parent"
             android:layout_height="25dp" />
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
-            <LinearLayout
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.shahu.weathery.customui.TextHolderRegular
+                android:id="@+id/main_city_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:text="--"
+                android:textAlignment="center"
+                android:textSize="36sp" />
 
-                <com.shahu.weathery.customui.TextHolderRegular
-                    android:id="@+id/main_city_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="--"
-                    android:textAlignment="center"
-                    android:textSize="36sp" />
+            <com.shahu.weathery.customui.TextHolderThin
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="20sp" />
 
-                <com.shahu.weathery.customui.TextHolderThin
-                    android:id="@+id/description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:textSize="20sp" />
+            <com.shahu.weathery.customui.TextHolderRegular
+                android:id="@+id/temperature"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="72sp" />
 
-                <com.shahu.weathery.customui.TextHolderRegular
-                    android:id="@+id/temperature"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:textSize="72sp" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20sp"
+                android:layout_marginTop="20dp">
 
                 <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20sp"
-                    android:layout_marginTop="20dp">
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
-                    <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <com.shahu.weathery.customui.TextHolderRegular
-                            android:id="@+id/current_day"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_marginEnd="10dp"
-                            android:gravity="center"
-                            android:textAlignment="center"
-                            android:textSize="24sp"
-                            android:visibility="gone" />
-
-                        <com.shahu.weathery.customui.TextHolderSemiBold
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_toEndOf="@id/current_day"
-                            android:gravity="center"
-                            android:text="TODAY"
-                            android:textAlignment="center"
-                            android:textSize="20sp" />
-                    </RelativeLayout>
-
-                    <RelativeLayout
+                    <com.shahu.weathery.customui.TextHolderRegular
+                        android:id="@+id/current_day"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true">
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center"
+                        android:textAlignment="center"
+                        android:textSize="24sp"
+                        android:visibility="gone" />
 
-                        <com.shahu.weathery.customui.TextHolderRegular
-                            android:id="@+id/current_max"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_marginEnd="25dp"
-                            android:gravity="center"
-                            android:letterSpacing="0.1"
-                            android:textAlignment="center"
-                            android:textSize="22sp" />
-
-                        <com.shahu.weathery.customui.TextHolderRegularGreyout
-                            android:id="@+id/current_min"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_toEndOf="@id/current_max"
-                            android:gravity="center"
-                            android:letterSpacing="0.1"
-                            android:textAlignment="center"
-                            android:textSize="22sp" />
-                    </RelativeLayout>
-
+                    <com.shahu.weathery.customui.TextHolderSemiBold
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/current_day"
+                        android:gravity="center"
+                        android:text="TODAY"
+                        android:textAlignment="center"
+                        android:textSize="20sp" />
                 </RelativeLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.75dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@android:color/darker_gray" />
-
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/hour_forecast_recycler_view"
+                <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal" />
+                    android:layout_alignParentEnd="true">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.75dp"
-                    android:background="@android:color/darker_gray" />
+                    <com.shahu.weathery.customui.TextHolderRegular
+                        android:id="@+id/current_max"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="25dp"
+                        android:gravity="center"
+                        android:letterSpacing="0.1"
+                        android:textAlignment="center"
+                        android:textSize="22sp" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/daily_forecast_recycler_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginVertical="10dp"
-                    android:orientation="vertical" />
+                    <com.shahu.weathery.customui.TextHolderRegularGreyout
+                        android:id="@+id/current_min"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/current_max"
+                        android:gravity="center"
+                        android:letterSpacing="0.1"
+                        android:textAlignment="center"
+                        android:textSize="22sp" />
+                </RelativeLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="0.75dp"
-                    android:background="@android:color/darker_gray" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.75dp"
+                android:layout_marginTop="10dp"
+                android:background="@android:color/darker_gray" />
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none">
 
                 <LinearLayout
-                    android:id="@+id/bottom_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:visibility="gone">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/hour_forecast_recycler_view"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:paddingHorizontal="20dp">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <com.shahu.weathery.customui.TextHolderRegularGreyout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="SUNSET"
-                                android:textSize="12sp" />
-
-                            <com.shahu.weathery.customui.TextHolderRegular
-                                android:id="@+id/sunriseTV"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="24sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <com.shahu.weathery.customui.TextHolderRegularGreyout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="SUNSET"
-                                android:textSize="12sp" />
-
-                            <com.shahu.weathery.customui.TextHolderRegular
-                                android:id="@+id/sunsetTV"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="24sp" />
-                        </LinearLayout>
-
-                    </LinearLayout>
+                        android:orientation="horizontal" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="0.75dp"
-                        android:layout_marginHorizontal="20dp"
-                        android:layout_marginTop="10dp"
                         android:background="@android:color/darker_gray" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/daily_forecast_recycler_view"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:paddingHorizontal="20dp">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <com.shahu.weathery.customui.TextHolderRegularGreyout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="CLOUDS"
-                                android:textSize="12sp" />
-
-                            <com.shahu.weathery.customui.TextHolderRegular
-                                android:id="@+id/cloudTV"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="24sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <com.shahu.weathery.customui.TextHolderRegularGreyout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="HUMIDITY"
-                                android:textSize="12sp" />
-
-                            <com.shahu.weathery.customui.TextHolderRegular
-                                android:id="@+id/humidityTV"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="24sp" />
-                        </LinearLayout>
-
-                    </LinearLayout>
+                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginVertical="10dp"
+                        android:orientation="vertical" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="0.75dp"
-                        android:layout_marginHorizontal="20dp"
-                        android:layout_marginTop="10dp"
                         android:background="@android:color/darker_gray" />
 
                     <LinearLayout
+                        android:id="@+id/bottom_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:paddingHorizontal="20dp">
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:layout_marginTop="10dp"
+                            android:paddingHorizontal="20dp">
 
-                            <com.shahu.weathery.customui.TextHolderRegularGreyout
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:text="WIND"
-                                android:textSize="12sp" />
+                                android:layout_weight="1"
+                                android:orientation="vertical">
 
-                            <com.shahu.weathery.customui.TextHolderRegular
-                                android:id="@+id/windTV"
-                                android:layout_width="wrap_content"
+                                <com.shahu.weathery.customui.TextHolderRegularGreyout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="SUNRISE"
+                                    android:textSize="12sp" />
+
+                                <com.shahu.weathery.customui.TextHolderRegular
+                                    android:id="@+id/sunriseTV"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="24sp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:textSize="24sp" />
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <com.shahu.weathery.customui.TextHolderRegularGreyout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="SUNSET"
+                                    android:textSize="12sp" />
+
+                                <com.shahu.weathery.customui.TextHolderRegular
+                                    android:id="@+id/sunsetTV"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="24sp" />
+                            </LinearLayout>
+
                         </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.75dp"
+                            android:layout_marginHorizontal="20dp"
+                            android:layout_marginTop="10dp"
+                            android:background="@android:color/darker_gray" />
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:layout_marginTop="10dp"
+                            android:paddingHorizontal="20dp">
 
-                            <com.shahu.weathery.customui.TextHolderRegularGreyout
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:text="FEELS LIKE"
-                                android:textSize="12sp" />
+                                android:layout_weight="1"
+                                android:orientation="vertical">
 
-                            <com.shahu.weathery.customui.TextHolderRegular
-                                android:id="@+id/feelsLikeTV"
-                                android:layout_width="wrap_content"
+                                <com.shahu.weathery.customui.TextHolderRegularGreyout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="CLOUDS"
+                                    android:textSize="12sp" />
+
+                                <com.shahu.weathery.customui.TextHolderRegular
+                                    android:id="@+id/cloudTV"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="24sp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:textSize="24sp" />
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <com.shahu.weathery.customui.TextHolderRegularGreyout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="HUMIDITY"
+                                    android:textSize="12sp" />
+
+                                <com.shahu.weathery.customui.TextHolderRegular
+                                    android:id="@+id/humidityTV"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="24sp" />
+                            </LinearLayout>
+
                         </LinearLayout>
 
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="0.75dp"
-                        android:layout_marginHorizontal="20dp"
-                        android:layout_marginTop="10dp"
-                        android:background="@android:color/darker_gray" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:paddingHorizontal="20dp">
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.75dp"
+                            android:layout_marginHorizontal="20dp"
+                            android:layout_marginTop="10dp"
+                            android:background="@android:color/darker_gray" />
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:layout_marginTop="10dp"
+                            android:paddingHorizontal="20dp">
 
-                            <com.shahu.weathery.customui.TextHolderRegularGreyout
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:text="PRESSURE"
-                                android:textSize="12sp" />
+                                android:layout_weight="1"
+                                android:orientation="vertical">
 
-                            <com.shahu.weathery.customui.TextHolderRegular
-                                android:id="@+id/pressureTV"
-                                android:layout_width="wrap_content"
+                                <com.shahu.weathery.customui.TextHolderRegularGreyout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="WIND"
+                                    android:textSize="12sp" />
+
+                                <com.shahu.weathery.customui.TextHolderRegular
+                                    android:id="@+id/windTV"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="24sp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:textSize="24sp" />
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <com.shahu.weathery.customui.TextHolderRegularGreyout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="FEELS LIKE"
+                                    android:textSize="12sp" />
+
+                                <com.shahu.weathery.customui.TextHolderRegular
+                                    android:id="@+id/feelsLikeTV"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="24sp" />
+                            </LinearLayout>
+
                         </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="0.75dp"
+                            android:layout_marginHorizontal="20dp"
+                            android:layout_marginTop="10dp"
+                            android:background="@android:color/darker_gray" />
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:layout_marginTop="10dp"
+                            android:paddingHorizontal="20dp">
 
-                            <com.shahu.weathery.customui.TextHolderRegularGreyout
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:text="UV INDEX"
-                                android:textSize="12sp" />
+                                android:layout_weight="1"
+                                android:orientation="vertical">
 
-                            <com.shahu.weathery.customui.TextHolderRegular
-                                android:id="@+id/uvIndexTV"
-                                android:layout_width="wrap_content"
+                                <com.shahu.weathery.customui.TextHolderRegularGreyout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="PRESSURE"
+                                    android:textSize="12sp" />
+
+                                <com.shahu.weathery.customui.TextHolderRegular
+                                    android:id="@+id/pressureTV"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="24sp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:textSize="24sp" />
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <com.shahu.weathery.customui.TextHolderRegularGreyout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="UV INDEX"
+                                    android:textSize="12sp" />
+
+                                <com.shahu.weathery.customui.TextHolderRegular
+                                    android:id="@+id/uvIndexTV"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="24sp" />
+                            </LinearLayout>
+
                         </LinearLayout>
-
                     </LinearLayout>
                 </LinearLayout>
+            </ScrollView>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="15dp" />
-            </LinearLayout>
-        </ScrollView>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:layout_marginBottom="20dp" />
+        </LinearLayout>
+
     </LinearLayout>
 </RelativeLayout>
